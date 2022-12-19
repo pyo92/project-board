@@ -32,12 +32,12 @@ spring:
   sql:
     init:
       mode: always
+  data:
+    rest:
+      base-path: /api
+      detection-strategy: annotated
 #  thymeleaf:
 #    cache: false
-#  data:
-#    rest:
-#      base-path: /api
-#      detection-strategy: annotated
 
 ---
 
