@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>project-board</title>
+</head>
+<body>
+  <header>
+    header 삽입부
+    <hr>
+  </header>
+
+  <main>
+    <form>
+      <select name="search-type">
+        <option>제목</option>
+        <option>본문</option>
+        <option>작성자</option>
+        <option>태그</option>
+      </select>
+      <input name="search-value" type="search" placeholder="검색어...">
+      <button type="submit">검 색</button>
+    </form>
+
+    <table>
+      <thead>
+        <tr>
+          <th>제목</th>
+          <th>태그</th>
+          <th>작성자</th>
+          <th>작성일</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>첫 번째 글</td>
+          <td>#spring</td>
+          <td>pyo</td>
+          <td>2022-12-22</td>
+        </tr>
+        <tr>
+          <td>두 번째 글</td>
+          <td>#spring</td>
+          <td>pyo</td>
+          <td>2022-12-22</td>
+        </tr>
+        <tr>
+          <td>세 번째 글</td>
+          <td>#jpa</td>
+          <td>pyo</td>
+          <td>2022-12-23</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <nav>
+      <table>
+        <tr>
+          <td>prev</td>
+          <td>1</td>
+          <td>2</td>
+          <td>3</td>
+          <td>4</td>
+          <td>5</td>
+          <td>next</td>
+        </tr>
+      </table>
+    </nav>
+  </main>
+
+  <footer>
+    <hr>
+    footer 삽입부
+  </footer>
+</body>
+</html>
