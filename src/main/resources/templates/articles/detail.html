@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" charset="PARK GI-PYO">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <title>project-board</title>
+</head>
+<body>
+    <header id="header"></header>
+
+    <main class="container">
+        <header class="py-5 text-center">
+            <h1>첫 번째 글</h1>
+        </header>
+
+        <div class="row g-5">
+            <section class="col-md-5 col-lg-4 order-md-last">
+                <aside>
+                    <p><span class="nick-name">pyo</span></p>
+                    <p><a class="u-url" rel="me" href="mailto:gipyopark@gmail.com">gipyopark@gmail.com</a></p>
+                    <p><time datetime="2022-12-22T23:00:00">2022-12-22</time></p>
+                    <p>#spring</p>
+                </aside>
+            </section>
+
+            <hr>
+
+            <article class="col-md-7 col-lg-8">
+                <p>첫 번째 글의 본문</p>
+            </article>
+        </div>
+
+        <div class="row g-5">
+            <section>
+                <form class="row g-3">
+                    <div class="col-8">
+                        <textarea class="form-control" placeholder="댓글 쓰기..." rows="3"></textarea>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-primary" type="submit">쓰 기</button>
+                    </div>
+                </form>
+
+                <br>
+
+                <ul>
+                    <li>
+                        <div>
+                            <time><small>2022-12-22</small></time>
+                            <strong>pyo</strong>
+                            <p>
+                                첫 번째 댓글
+                            </p>
+                        </div>
+                    </li>
+                    <li>
+                        <div>
+                            <time><small>2022-12-22</small></time>
+                            <strong>pyo</strong>
+                            <p>
+                                두 번째 댓글
+                            </p>
+                        </div>
+                    </li>
+                </ul>
+
+                <ul class="pagination justify-content-center">
+                    <li class="page-item"><a class="page-link" href="#">« prev</a></li>
+                    <li class="page-item"><a class="page-link" href="#">next »</a></li>
+                </ul>
+            </section>
+        </div>
+    </main>
+
+    <footer id="footer"></footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+            crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+body {
+    background:#eee;
+}
+
+.grid {
+    position: relative;
+    width: 100%;
+    background: #fff;
+    color: #666666;
+    border-radius: 2px;
+    margin-bottom: 25px;
+    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.grid .grid-body {
+    padding: 15px 20px 15px 20px;
+    font-size: 0.9em;
+    line-height: 1.9em;
+}
+
+.search table tr td.rate {
+    color: #f39c12;
+    line-height: 50px;
+}
+
+.search table tr:hover {
+    cursor: pointer;
+}
+
+.input-group {
+    width: 60%;
+}
+
+.search-group {
+    justify-content: center;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.search-group select {
+    width: 80px;
+}
+
+.search-group input {
+    width: 400px;
+}
+
+.search-group button {
+    width: 50px;
+}
