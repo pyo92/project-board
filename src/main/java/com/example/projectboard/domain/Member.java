@@ -12,14 +12,14 @@ import java.util.Objects;
 @Table(indexes = {
         @Index(columnList = "userId"),
         @Index(columnList = "email", unique = true),
-        @Index(columnList = "createAt"),
-        @Index(columnList = "createBy")
+        @Index(columnList = "createdAt"),
+        @Index(columnList = "createdBy")
 })
 @Entity
-public class Member {
+public class Member extends AuditingFields {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Setter
@@ -38,18 +38,22 @@ public class Member {
     @Column(length = 100)
     private String nickName;
 
+    @Setter
+    @Column
+    private String memo;
+
     protected Member() {};
 
-    private Member(Long id, String userId, String userPw, String email, String nickName) {
-        this.id = id;
+    private Member(String userId, String userPw, String email, String nickName, String memo) {
         this.userId = userId;
         this.userPw = userPw;
         this.email = email;
         this.nickName = nickName;
+        this.memo = memo;
     }
 
-    public static Member of(Long id, String userId, String userPw, String email, String nickName) {
-        return new Member(id, userId, userPw, email, nickName);
+    public static Member of(String userId, String userPw, String email, String nickName, String memo) {
+        return new Member(userId, userPw, email, nickName, memo);
     }
 
     @Override
