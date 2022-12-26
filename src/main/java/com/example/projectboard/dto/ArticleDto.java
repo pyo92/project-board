@@ -1,0 +1,45 @@
+package com.example.projectboard.dto;
+
+import com.example.projectboard.domain.Article;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
+public record ArticleDto(
+        Long id,
+        MemberDto memberDto,
+        String title,
+        String content,
+        String hashTag,
+        String createdBy,
+        LocalDateTime createdAt,
+        String modifiedBy,
+        LocalDateTime modifiedAt
+) {
+    public static ArticleDto of(Long id, MemberDto memberDto, String title, String content, String hashTag, String createdBy, LocalDateTime createdAt, String modifiedBy, LocalDateTime modifiedAt) {
+        return new ArticleDto(id, memberDto, title, content, hashTag, createdBy, createdAt, modifiedBy, modifiedAt);
+    }
+
+    public static ArticleDto from(Article entity) {
+        return new ArticleDto(
+                entity.getId(),
+                MemberDto.from(entity.getMember()),
+                entity.getTitle(),
+                entity.getContent(),
+                entity.getHashTag(),
+                entity.getCreatedBy(),
+                entity.getCreatedAt(),
+                entity.getModifiedBy(),
+                entity.getModifiedAt()
+        );
+    }
+
+    public Article toEntity() {
+        return Article.of(
+                memberDto.toEntity(),
+                title,
+                content,
+                hashTag
+        );
+    }
+}
