@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Getter
-@ToString
+@ToString(callSuper = true)
 @Table(indexes = {
         @Index(columnList = "title"),
         @Index(columnList = "hashTag"),
@@ -21,8 +21,12 @@ import java.util.Objects;
 public class Article extends AuditingFields {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Setter
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Member member;
 
     @Setter
     @Column(nullable = false)
@@ -36,20 +40,21 @@ public class Article extends AuditingFields {
     private String hashTag;
 
     @ToString.Exclude
-    @OrderBy("id")
+    @OrderBy("createdAt DESC")
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
     private List<ArticleComment> articleComments = new ArrayList<>();
 
     protected Article() {}
 
-    private Article(String title, String content, String hashTag) {
+    private Article(Member member, String title, String content, String hashTag) {
+        this.member = member;
         this.title = title;
         this.content = content;
         this.hashTag = hashTag;
     }
 
-    public static Article of(String title, String content, String hashTag) {
-        return new Article(title, content, hashTag);
+    public static Article of(Member member, String title, String content, String hashTag) {
+        return new Article(member, title, content, hashTag);
     }
 
     @Override

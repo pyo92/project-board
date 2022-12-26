@@ -2,8 +2,7 @@ package com.example.projectboard.repository;
 
 import com.example.projectboard.config.JpaConfig;
 import com.example.projectboard.domain.Article;
-import com.example.projectboard.domain.ArticleComment;
-import org.junit.jupiter.api.Disabled;
+import com.example.projectboard.domain.Member;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +13,13 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Disabled
 @DisplayName("JPA CRUD 테스트")
 @Import(JpaConfig.class) //Auditing
 @DataJpaTest
 class JpaRepositoryTest {
+
+    @Autowired
+    MemberRepository memberRepository;
 
     @Autowired
     ArticleRepository articleRepository;
@@ -37,85 +38,54 @@ class JpaRepositoryTest {
         //then
         assertThat(articles)
                 .isNotNull()
-                .hasSize(0);
+                .hasSize(123);
     }
 
     @DisplayName("insert 테스트")
     @Test
     void insert() {
         //given
-        Article article = Article.of("test article", "test article's content", "#spring");
-        ArticleComment comment = ArticleComment.of(article, "test articles' comment");
-        article.getArticleComments().add(comment);
+        long previousArticleCount = articleRepository.count();
+        Member member = memberRepository.save(Member.of("test user", "test user password", null, null, null));
+        Article article = Article.of(member, "test article", "test article's content", "#spring");
 
         //when
-        articleRepository.saveAndFlush(article);
+        articleRepository.save(article);
 
         //then
-        assertThat(articleRepository.findAll())
-                .isNotNull()
-                .hasSize(1);
-
-        assertThat(articleCommentRepository.findAll())
-                .isNotNull()
-                .hasSize(1);
+        assertThat(articleRepository.count()).isEqualTo(previousArticleCount + 1);
     }
 
     @DisplayName("update 테스트")
     @Test
     void update() {
         //given
-        Article article = Article.of("test article", "test article's content", "#spring");
-        ArticleComment comment = ArticleComment.of(article, "test articles' comment");
-        article.getArticleComments().add(comment);
-
-        articleRepository.saveAndFlush(article);
+        Article article = articleRepository.findById(1L).orElseThrow();
+        article.setHashTag("#springboot");
 
         //when
-        Article savedArticle = articleRepository.findAll().get(0);
-        savedArticle.setHashTag("#springboot");
-
-        for (ArticleComment c : savedArticle.getArticleComments()) {
-            c.setContent("updated test articles' comment");
-        }
-
-        articleRepository.flush(); //flush -> update sql 발생
+        Article savedArticle = articleRepository.saveAndFlush(article);//flush -> update sql 발생
 
         //then
-        Article findedArticle = articleRepository.findAll().get(0);
-        assertThat(findedArticle.getHashTag())
-                .isEqualTo("#springboot");
-
-        for (ArticleComment c : findedArticle.getArticleComments()) {
-            assertThat(c.getContent())
-                    .isEqualTo("updated test articles' comment");
-        }
+        assertThat(savedArticle).hasFieldOrPropertyWithValue("hashTag", "#springboot");
     }
 
     @DisplayName("delete 테스트")
     @Test
     void delete() {
         //given
-        Article article = Article.of("test article", "test article's content", "#spring");
-        ArticleComment comment = ArticleComment.of(article, "test articles' comment");
-        article.getArticleComments().add(comment);
-
-        articleRepository.saveAndFlush(article);
+        Article article = articleRepository.findById(1L).orElseThrow();
+        long previousArticleCount = articleRepository.count();
+        long previousArticleCommentCount = articleCommentRepository.count();
+        int deletedCommentsSize = article.getArticleComments().size();
 
         //when
-        Article findedArticle = articleRepository.findAll().get(0);
-        articleRepository.delete(findedArticle);
-
+        articleRepository.delete(article);
         articleRepository.flush(); //flush -> delete sql 발생
 
         //then
-        assertThat(articleRepository.findAll())
-                .isNotNull()
-                .hasSize(0);
-
-        assertThat(articleCommentRepository.findAll())
-                .isNotNull()
-                .hasSize(0); //cascade
+        assertThat(articleRepository.count()).isEqualTo(previousArticleCount - 1);
+        assertThat(articleCommentRepository.count()).isEqualTo(previousArticleCommentCount - deletedCommentsSize);
     }
 
 }
