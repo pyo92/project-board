@@ -2,4 +2,19 @@
 <thlogic>
     <attr sel="#header" th:replace="header :: header" />
     <attr sel="#footer" th:replace="footer :: footer" />
+
+    <attr sel="#hash-tag" th:each="hashtag : ${hashtags}">
+        <attr sel="input" th:text="' ' + ${hashtag}" />
+    </attr>
+
+    <attr sel="#article-table">
+        <attr sel="tbody" th:remove="all-but-first">
+            <attr sel="tr[0]" th:each="article : ${articles}" th:onclick="|location.href='@{'/articles/' + ${article.id}}'|">
+                <attr sel="td.title" th:text="${article.title}" />
+                <attr sel="td.hash-tag" th:text="${article.hashtag}" />
+                <attr sel="td.nick-name" th:text="${article.nickname}" />
+                <attr sel="td.created-at" th:text="${#temporals.format(article.createdAt, 'yyyy-MM-dd')}" />
+            </attr>
+        </attr>
+    </attr>
 </thlogic>
