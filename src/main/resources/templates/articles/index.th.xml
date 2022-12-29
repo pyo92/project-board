@@ -22,15 +22,23 @@
     <attr sel="#pagination">
         <attr sel="ul">
             <attr sel="li[0]" th:class="'page-item' + (${articles.number} <= 0 ? ' disabled' : '')">
-                <attr sel="a" th:text="'«'" th:href="@{/articles(page=${articles.number - 1})}"
+                <attr sel="a" th:text="'«'" th:href="@{/articles(page=${0})}"
                       th:class="'page-link' + (${articles.number} <= 0 ? ' disabled' : '')"/>
             </attr>
-            <attr sel="li[1]" th:each="pageNumber : ${paginationBarNumbers}"
+            <attr sel="li[1]" th:class="'page-item' + (${articles.number} <= 0 ? ' disabled' : '')">
+                <attr sel="a" th:text="'‹'" th:href="@{/articles(page=${articles.number - 1})}"
+                      th:class="'page-link' + (${articles.number} <= 0 ? ' disabled' : '')"/>
+            </attr>
+            <attr sel="li[2]" th:each="pageNumber : ${paginationBarNumbers}"
                   th:class="'page-item' + (${articles.number} == ${pageNumber} ? ' active' : '')">
                 <attr sel="a" th:text="${pageNumber + 1}" th:href="@{/articles(page=${pageNumber})}"/>
             </attr>
-            <attr sel="li[2]" th:class="'page-item' + (${articles.number + 1} >= ${articles.totalPages} ? ' disabled' : '')">
-                <attr sel="a" th:text="'»'" th:href="@{/articles(page=${articles.number + 1})}"
+            <attr sel="li[3]" th:class="'page-item' + (${articles.number + 1} >= ${articles.totalPages} ? ' disabled' : '')">
+                <attr sel="a" th:text="'›'" th:href="@{/articles(page=${articles.number + 1})}"
+                      th:class="'page-link' + (${articles.number + 1} >= ${articles.totalPages} ? ' disabled' : '')"/>
+            </attr>
+            <attr sel="li[4]" th:class="'page-item' + (${articles.number + 1} >= ${articles.totalPages} ? ' disabled' : '')">
+                <attr sel="a" th:text="'»'" th:href="@{/articles(page=${articles.totalPages - 1})}"
                       th:class="'page-link' + (${articles.number + 1} >= ${articles.totalPages} ? ' disabled' : '')"/>
             </attr>
         </attr>
