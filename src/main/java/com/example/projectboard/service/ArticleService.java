@@ -66,6 +66,11 @@ public class ArticleService {
     }
 
     @Transactional(readOnly = true)
+    public long getArticleCount() {
+        return articleRepository.count();
+    }
+
+    @Transactional(readOnly = true)
     public List<String> getAllHashTag() {
         return articleRepository.findAllHashTag();
     }

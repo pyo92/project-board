@@ -53,6 +53,7 @@ public class ArticleController {
 
         map.addAttribute("article", articleWithCommentResponse);
         map.addAttribute("articleComments", articleWithCommentResponse.articleCommentsResponse());
+        map.addAttribute("totalCount", articleService.getArticleCount());
         return "articles/detail";
     }
 }
