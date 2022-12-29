@@ -4,6 +4,7 @@ import com.example.projectboard.config.SecurityConfig;
 import com.example.projectboard.dto.ArticleWithCommentsDto;
 import com.example.projectboard.dto.MemberDto;
 import com.example.projectboard.service.ArticleService;
+import com.example.projectboard.service.PaginationService;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,8 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -37,6 +37,9 @@ class ArticleControllerTest {
     @MockBean
     private ArticleService articleService;
 
+    @MockBean
+    private PaginationService paginationService;
+
     @Autowired
     public ArticleControllerTest(MockMvc mvc) {
         this.mvc = mvc;
@@ -47,17 +50,22 @@ class ArticleControllerTest {
     void viewArticles() throws Exception {
         //given
         given(articleService.searchArticles(eq(null), eq(null), any(Pageable.class))).willReturn(Page.empty());
+        given(paginationService.getPaginationBarNumbers(anyInt(), anyInt())).willReturn(List.of(0, 1, 2, 3, 4));
 
         //when
         mvc.perform(get("/articles"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
                 .andExpect(view().name("articles/index"))
-                .andExpect(model().attributeExists("articles"));
+                .andExpect(model().attributeExists("articles"))
+                .andExpect(model().attributeExists("paginationBarNumbers"));
 
         //then
         then(articleService).should().searchArticles(eq(null), eq(null), any(Pageable.class));
+        then(paginationService).should().getPaginationBarNumbers(anyInt(), anyInt());
     }
+
+    //TODO: 게시판 페이지 pagination, sorting 테스트 코드 작성 (sorting 기능 개발은 다음 이슈때 진행)
 
     @DisplayName("[view][GET] 게시글 상세 페이지 - 정상 호출")
     @Test

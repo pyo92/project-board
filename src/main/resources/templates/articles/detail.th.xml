@@ -19,4 +19,15 @@
             <attr sel="div/p" th:text="${comment.content}" />
         </attr>
     </attr>
+
+    <attr sel="#pagination">
+        <attr sel="ul">
+            <attr sel="li[0]">
+                <attr sel="a" th:href="${article.id} - 1 <= 0 ? '#' : |/articles/*{id - 1}|" th:class="'page-link' + (${article.id} - 1 <= 0 ? ' disabled' : '')"/>
+            </attr>
+            <attr sel="li[1]">
+                <attr sel="a" th:href="${article.id} >= ${totalCount} ? '#' : |/articles/*{id + 1}|" th:class="'page-link' + (${article.id} >= ${totalCount} ? ' disabled' : '')"/>
+            </attr>
+        </attr>
+    </attr>
 </thlogic>
