@@ -32,15 +32,13 @@ public class ArticleController {
     public String articles(
             @RequestParam(required = false) SearchType searchType,
             @RequestParam(required = false) String searchValue,
-            @RequestParam(required = false) List<String> filterTags,
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
             ModelMap map
     ) {
-        Page<ArticleResponse> articles = articleService.searchArticles(searchType, searchValue, filterTags, pageable).map(ArticleResponse::from);
+        Page<ArticleResponse> articles = articleService.searchArticles(searchType, searchValue, pageable).map(ArticleResponse::from);
         List<Integer> barNumbers = paginationService.getPaginationBarNumbers(pageable.getPageNumber(), articles.getTotalPages());
         map.addAttribute("articles", articles);
         map.addAttribute("paginationBarNumbers", barNumbers);
-        map.addAttribute("searchTypes", SearchType.values());
         map.addAttribute("hashtags", articleService.getAllHashTag()); //hashtag 목록
 
         return "articles/index";

@@ -32,17 +32,34 @@
                                 <h2 class="grid-title"><i class="fa fa-filter"></i> Filters</h2>
                                 <hr>
 
-                                <!-- BEGIN FILTER BY HASHTAG -->
-                                <h4>By tag:</h4>
+                                <!-- BEGIN FILTER BY CATEGORY -->
+                                <h4>By category:</h4>
                                 <div class="checkbox" id="hash-tag">
                                     <input type="checkbox" class="icheck" />
                                 </div>
-                                <!-- END FILTER BY HASHTAG -->
+                                <!-- END FILTER BY CATEGORY -->
+
+                                <div class="padding"><br></div>
+
+                                <!-- BEGIN FILTER BY DATE -->
+                                <h4>By date:</h4>
+                                From
+                                <div class="input-group date form_date">
+                                    <input type="date" data-link-field="dtp-input1" data-date-format="yyyy-mm-dd" class="form-control">
+                                </div>
+                                <input type="hidden" id="dtp_input1" value="">
+
+                                To
+                                <div class="input-group date form_date">
+                                    <input type="date" data-link-field="dtp-input2" data-date-format="yyyy-mm-dd" class="form-control">
+                                </div>
+                                <input type="hidden" id="dtp_input2" value="">
+                                <!-- END FILTER BY DATE -->
                             </div>
                             <!-- END FILTERS -->
                             <!-- BEGIN RESULT -->
                             <div class="col-md-9">
-                                <h2><i class="fa fa-file-o"></i> Articles</h2>
+                                <h2><i class="fa fa-file-o"></i> Result</h2>
                                 <hr>
                                 <div class="padding"></div>
 
@@ -59,10 +76,10 @@
                                         </thead>
                                         <tbody>
                                         <tr>
-                                            <td class="title col-6 text-truncate" style="max-width: 400px">첫 번째 글</td>
-                                            <td class="hash-tag col">#spring</td>
-                                            <td class="nick-name col">pyo</td>
-                                            <td class="created-at col">2022-12-22</td>
+                                            <td class="title">첫 번째 글</td>
+                                            <td class="hash-tag">#spring</td>
+                                            <td class="nick-name">pyo</td>
+                                            <td class="created-at">2022-12-22</td>
                                         </tr>
                                         <tr>
                                             <td>두 번째 글</td>
@@ -82,21 +99,17 @@
                                 <!-- END TABLE RESULT -->
 
                                 <!-- BEGIN SEARCH INPUT -->
-                                <form action="/articles" method="get">
-                                    <div class="row search-group">
-                                        <input id="search-value-sort" type="hidden" name="sort"/>
-                                        <select id="search-type" name="searchType" class="form-control">
-                                            <option>제목</option>
-                                            <option>본문</option>
-                                            <option>작성자</option>
-                                        </select>
-                                        <input id="search-value" type="text" name="searchValue" class="form-control" value=""/>
-                                        <input id="search-value-filter-tags" type="hidden" name="filterTags"/>
-                                        <button class="btn btn-primary" type="submit">
-                                            <i class="fa fa-search"></i>
-                                        </button>
-                                    </div>
-                                </form>
+                                <div class="row search-group">
+                                    <select id="sel" class="form-control">
+                                        <option>제목</option>
+                                        <option>본문</option>
+                                        <option>작성자</option>
+                                    </select>
+                                    <input type="text" class="form-control" value="">
+                                    <button class="btn btn-primary" type="button">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </div>
                                 <!-- END SEARCH INPUT -->
 
                                 <!-- BEGIN PAGINATION -->
