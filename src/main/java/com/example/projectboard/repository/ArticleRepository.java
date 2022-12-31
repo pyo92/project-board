@@ -20,18 +20,13 @@ public interface ArticleRepository extends
         , QuerydslPredicateExecutor<Article>
         , QuerydslBinderCustomizer<QArticle> {
 
-
     Page<Article> findByTitleContaining(String title, Pageable pageable);
     Page<Article> findByContentContaining(String content, Pageable pageable);
+    Page<Article> findByHashTag(String hashTag, Pageable pageable);
+    Page<Article> findByMember_UserIdContaining(String userId, Pageable pageable);
     Page<Article> findByMember_NickNameContaining(String nickName, Pageable pageable);
 
-    Page<Article> findByTitleContainingAndHashTagIn(String title, List<String> filterTags, Pageable pageable);
-    Page<Article> findByContentContainingAndHashTagIn(String content, List<String> filterTags, Pageable pageable);
-    Page<Article> findByMember_NickNameContainingAndHashTagIn(String nickName, List<String> filterTags, Pageable pageable);
-
-    Page<Article> findByHashTagIn(List<String> filterTags, Pageable pageable);
-
-    @Query(value = "select distinct a.hashTag from Article a where a.hashTag is not null")
+    @Query(value = "select distinct a.hashTag from Article a")
     public List<String> findAllHashTag();
 
 
