@@ -8,6 +8,29 @@
     </attr>
 
     <attr sel="#article-table">
+        <attr sel="thead/tr">
+            <attr sel="th.title" th:text="'제목'"
+                  th:onclick="|location.href='@{/articles(
+                      page=${articles.number},
+                      sort='title' + (${articles.sort.getOrderFor('title')} != null ? (${articles.sort.getOrderFor('title').direction.name} != 'DESC' ? ',desc' : '') : '')
+                  )}'|"/>
+            <attr sel="th.hash-tag" th:text="'태그'"
+                  th:onclick="|location.href='@{/articles(
+                      page=${articles.number},
+                      sort='hashTag' + (${articles.sort.getOrderFor('hashTag')} != null ? (${articles.sort.getOrderFor('hashTag').direction.name} != 'DESC' ? ',desc' : '') : '')
+                  )}'|"/>
+            <attr sel="th.nick-name" th:text="'작성자'"
+                  th:onclick="|location.href='@{/articles(
+                      page=${articles.number},
+                      sort='member.nickName' + (${articles.sort.getOrderFor('member.nickName')} != null ? (${articles.sort.getOrderFor('member.nickName').direction.name} != 'DESC' ? ',desc' : '') : '')
+                  )}'|"/>
+            <attr sel="th.created-at" th:text="'작성일'"
+                  th:onclick="|location.href='@{/articles(
+                      page=${articles.number},
+                      sort='createdAt' + (${articles.sort.getOrderFor('createdAt')} != null ? (${articles.sort.getOrderFor('createdAt').direction.name} != 'DESC' ? ',desc' : '') : '')
+                  )}'|"/>
+        </attr>
+
         <attr sel="tbody" th:remove="all-but-first">
             <attr sel="tr[0]" th:each="article : ${articles}"
                   th:onclick="|location.href='@{'/articles/' + ${article.id}}'|">
@@ -33,11 +56,13 @@
                   th:class="'page-item' + (${articles.number} == ${pageNumber} ? ' active' : '')">
                 <attr sel="a" th:text="${pageNumber + 1}" th:href="@{/articles(page=${pageNumber})}"/>
             </attr>
-            <attr sel="li[3]" th:class="'page-item' + (${articles.number + 1} >= ${articles.totalPages} ? ' disabled' : '')">
+            <attr sel="li[3]"
+                  th:class="'page-item' + (${articles.number + 1} >= ${articles.totalPages} ? ' disabled' : '')">
                 <attr sel="a" th:text="'›'" th:href="@{/articles(page=${articles.number + 1})}"
                       th:class="'page-link' + (${articles.number + 1} >= ${articles.totalPages} ? ' disabled' : '')"/>
             </attr>
-            <attr sel="li[4]" th:class="'page-item' + (${articles.number + 1} >= ${articles.totalPages} ? ' disabled' : '')">
+            <attr sel="li[4]"
+                  th:class="'page-item' + (${articles.number + 1} >= ${articles.totalPages} ? ' disabled' : '')">
                 <attr sel="a" th:text="'»'" th:href="@{/articles(page=${articles.totalPages - 1})}"
                       th:class="'page-link' + (${articles.number + 1} >= ${articles.totalPages} ? ' disabled' : '')"/>
             </attr>
