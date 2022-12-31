@@ -33,7 +33,7 @@
                                 <hr>
 
                                 <!-- BEGIN FILTER BY CATEGORY -->
-                                <h4>By category:</h4>
+                                <h4>By hashtag:</h4>
                                 <div class="checkbox" id="hash-tag">
                                     <input type="checkbox" class="icheck" />
                                 </div>
@@ -59,7 +59,7 @@
                             <!-- END FILTERS -->
                             <!-- BEGIN RESULT -->
                             <div class="col-md-9">
-                                <h2><i class="fa fa-file-o"></i> Result</h2>
+                                <h2><i class="fa fa-file-o"></i> Articles</h2>
                                 <hr>
                                 <div class="padding"></div>
 
@@ -99,17 +99,19 @@
                                 <!-- END TABLE RESULT -->
 
                                 <!-- BEGIN SEARCH INPUT -->
-                                <div class="row search-group">
-                                    <select id="sel" class="form-control">
-                                        <option>제목</option>
-                                        <option>본문</option>
-                                        <option>작성자</option>
-                                    </select>
-                                    <input type="text" class="form-control" value="">
-                                    <button class="btn btn-primary" type="button">
-                                        <i class="fa fa-search"></i>
-                                    </button>
-                                </div>
+                                <form action="/articles" method="get">
+                                    <div class="row search-group">
+                                        <select id="search-type" name="searchType" class="form-control">
+                                            <option>제목</option>
+                                            <option>본문</option>
+                                            <option>작성자</option>
+                                        </select>
+                                        <input id="search-value" type="text" name="searchValue" class="form-control" value=""/>
+                                        <button class="btn btn-primary" type="submit">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+                                    </div>
+                                </form>
                                 <!-- END SEARCH INPUT -->
 
                                 <!-- BEGIN PAGINATION -->
