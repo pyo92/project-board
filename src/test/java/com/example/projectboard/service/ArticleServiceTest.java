@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,7 +48,7 @@ class ArticleServiceTest {
         given(articleRepository.findAll(pageable)).willReturn(Page.empty());
 
         // When
-        Page<ArticleDto> articles = sut.searchArticles(null, null, pageable);
+        Page<ArticleDto> articles = sut.searchArticles(null, null, null, pageable);
 
         // Then
         assertThat(articles).isEmpty();
@@ -64,26 +65,27 @@ class ArticleServiceTest {
         given(articleRepository.findByTitleContaining(searchKeyword, pageable)).willReturn(Page.empty());
 
         // When
-        Page<ArticleDto> articles = sut.searchArticles(searchType, searchKeyword, pageable);
+        Page<ArticleDto> articles = sut.searchArticles(searchType, searchKeyword, null, pageable);
 
         // Then
         assertThat(articles).isEmpty();
         then(articleRepository).should().findByTitleContaining(searchKeyword, pageable);
     }
 
-    @DisplayName("게시글을 검색하면, 게시글 리스트를 반환한다.")
+    @DisplayName("태그로 필터하면, 게시글 페이지를 반환한다.")
     @Test
-    void givenSearchParams_whenSearchingArticles_thenReturnArticleList() {
-        //given
+    void givenFilterTags_whenSearchingArticles_thenReturnsArticlePage() {
+        // Given
+        List<String> filterTags = List.of("%23blue");
         Pageable pageable = Pageable.ofSize(20);
-        given(articleRepository.findAll(pageable)).willReturn(Page.empty());
+        given(articleRepository.findByHashTagIn(filterTags, pageable)).willReturn(Page.empty());
 
-        //when
-        Page<ArticleDto> articles = sut.searchArticles(null, null, pageable);
+        // When
+        Page<ArticleDto> articles = sut.searchArticles(null, null, filterTags, pageable);
 
-        // then
-        assertThat(articles).isNotNull();
-        then(articleRepository).should().findAll(pageable);
+        // Then
+        assertThat(articles).isEmpty();
+        then(articleRepository).should().findByHashTagIn(filterTags, pageable);
     }
 
     @DisplayName("게시글을 조회하면, 게시글을 반환한다.")
