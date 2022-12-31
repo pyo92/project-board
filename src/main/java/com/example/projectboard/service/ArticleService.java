@@ -24,18 +24,31 @@ public class ArticleService {
     private final ArticleRepository articleRepository;
 
     @Transactional(readOnly = true)
-    public Page<ArticleDto> searchArticles(SearchType searchType, String searchKeyword, Pageable pageable) {
-        if (searchKeyword == null || searchKeyword.isBlank()) {
+    public Page<ArticleDto> searchArticles(SearchType searchType, String searchKeyword, List<String> filterTags, Pageable pageable) {
+        if ((searchKeyword == null || searchKeyword.isBlank()) && (filterTags == null || filterTags.isEmpty())) {
             return articleRepository.findAll(pageable).map(ArticleDto::from);
         }
 
-        return switch (searchType) {
-            case TITLE -> articleRepository.findByTitleContaining(searchKeyword, pageable).map(ArticleDto::from);
-            case CONTENT -> articleRepository.findByContentContaining(searchKeyword, pageable).map(ArticleDto::from);
-            case HASHTAG -> articleRepository.findByHashTag(searchKeyword, pageable).map(ArticleDto::from);
-            case ID -> articleRepository.findByMember_UserIdContaining(searchKeyword, pageable).map(ArticleDto::from);
-            case NICKNAME -> articleRepository.findByMember_NickNameContaining(searchKeyword, pageable).map(ArticleDto::from);
-        };
+        if (searchKeyword == null || searchKeyword.isBlank()) {
+            //필터링 조회
+            return articleRepository.findByHashTagIn(filterTags, pageable).map(ArticleDto::from);
+        }
+
+        if (filterTags == null || filterTags.isEmpty()) {
+            //검색바 조회
+            return switch (searchType) {
+                case TITLE -> articleRepository.findByTitleContaining(searchKeyword, pageable).map(ArticleDto::from);
+                case CONTENT -> articleRepository.findByContentContaining(searchKeyword, pageable).map(ArticleDto::from);
+                case NICKNAME -> articleRepository.findByMember_NickNameContaining(searchKeyword, pageable).map(ArticleDto::from);
+            };
+        } else {
+            //검색바 + 필터링 조회
+            return switch (searchType) {
+                case TITLE -> articleRepository.findByTitleContainingAndHashTagIn(searchKeyword, filterTags, pageable).map(ArticleDto::from);
+                case CONTENT -> articleRepository.findByContentContainingAndHashTagIn(searchKeyword, filterTags, pageable).map(ArticleDto::from);
+                case NICKNAME -> articleRepository.findByMember_NickNameContainingAndHashTagIn(searchKeyword, filterTags, pageable).map(ArticleDto::from);
+            };
+        }
     }
 
     @Transactional(readOnly = true)
