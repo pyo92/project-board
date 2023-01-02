@@ -3,6 +3,8 @@
     <attr sel="#header" th:replace="header :: header"/>
     <attr sel="#footer" th:replace="footer :: footer"/>
 
+    <attr sel="#new-article" th:onclick="|location.href='/articles/form'|"/>
+
     <attr sel="#hash-tag" th:each="hashtag : ${hashtags}">
         <attr sel="input" th:text="' ' + ${hashtag}" th:value="${hashtag}"
               th:checked="${param.filterTags == null ? 'false' : #strings.contains(param.filterTags, '' + hashtag)}"

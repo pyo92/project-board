@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<thlogic>
+    <attr sel="#header" th:replace="header :: header" />
+    <attr sel="#footer" th:replace="footer :: footer" />
+
+    <attr sel="#article-form-header/h1" th:text="'게시글 ' + ${formType.description}" />
+
+    <attr sel="#article-form" th:action="${formType.isUpdate} ? '/articles/' + ${article.id} + '/form' : '/articles/form'" th:method="post">
+        <attr sel="#title" th:value="${formType.isUpdate} ? ${article.title} : ''" />
+        <attr sel="#content" th:text="${formType.isUpdate} ? ${article.content} : ''" />
+        <attr sel="#hashtag" th:value="${formType.isUpdate} ? ${article.hashtag} : ''" />
+        <attr sel="#cancel-button" th:onclick="'history.back()'" />
+    </attr>
+</thlogic>

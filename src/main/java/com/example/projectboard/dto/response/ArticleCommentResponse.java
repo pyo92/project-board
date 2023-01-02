@@ -1,4 +1,4 @@
-package com.example.projectboard.response;
+package com.example.projectboard.dto.response;
 
 import com.example.projectboard.dto.ArticleCommentDto;
 

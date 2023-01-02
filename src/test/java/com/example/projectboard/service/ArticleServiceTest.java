@@ -97,7 +97,7 @@ class ArticleServiceTest {
         given(articleRepository.findById(articleId)).willReturn(Optional.of(article));
 
         //when
-        ArticleWithCommentsDto dto = sut.getArticle(1L);
+        ArticleWithCommentsDto dto = sut.getArticleWithCommentsDto(1L);
 
         // then
         assertThat(dto)
@@ -115,7 +115,7 @@ class ArticleServiceTest {
         given(articleRepository.findById(articleId)).willReturn(Optional.empty());
 
         //when
-        Throwable t = catchThrowable(() -> sut.getArticle(articleId));
+        Throwable t = catchThrowable(() -> sut.getArticleWithCommentsDto(articleId));
 
         //then
         assertThat(t)
@@ -129,12 +129,14 @@ class ArticleServiceTest {
     void givenArticleInfo_whenSavingArticle_thenSaveArticle() {
         //given
         ArticleDto dto = createArticleDto();
+        given(memberRepository.getReferenceById(dto.memberDto().id())).willReturn(createMember());
         given(articleRepository.save(any(Article.class))).willReturn(createArticle());
 
         //when
         sut.saveArticle(dto);
 
         //then
+        then(memberRepository).should().getReferenceById(dto.memberDto().id());
         then(articleRepository).should().save(any(Article.class));
     }
 
@@ -147,7 +149,7 @@ class ArticleServiceTest {
         given(articleRepository.getReferenceById(dto.id())).willReturn(article);
 
         //when
-        sut.updateArticle(dto);
+        sut.updateArticle(1L, dto);
 
         //then
         assertThat(article)
@@ -165,7 +167,7 @@ class ArticleServiceTest {
         given(articleRepository.getReferenceById(dto.id())).willThrow(EntityNotFoundException.class);
 
         //when
-        sut.updateArticle(dto);
+        sut.updateArticle(1L, dto);
 
         //then
         then(articleRepository).should().getReferenceById(dto.id());

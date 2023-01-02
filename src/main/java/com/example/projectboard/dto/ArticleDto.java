@@ -1,8 +1,8 @@
 package com.example.projectboard.dto;
 
 import com.example.projectboard.domain.Article;
+import com.example.projectboard.domain.Member;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public record ArticleDto(
@@ -16,6 +16,11 @@ public record ArticleDto(
         String modifiedBy,
         LocalDateTime modifiedAt
 ) {
+
+    public static ArticleDto of(MemberDto memberDto, String title, String content, String hashTag) {
+        return new ArticleDto(null, memberDto, title, content, hashTag, null, null, null, null);
+    }
+
     public static ArticleDto of(Long id, MemberDto memberDto, String title, String content, String hashTag, String createdBy, LocalDateTime createdAt, String modifiedBy, LocalDateTime modifiedAt) {
         return new ArticleDto(id, memberDto, title, content, hashTag, createdBy, createdAt, modifiedBy, modifiedAt);
     }
@@ -34,9 +39,9 @@ public record ArticleDto(
         );
     }
 
-    public Article toEntity() {
+    public Article toEntity(Member member) {
         return Article.of(
-                memberDto.toEntity(),
+                member,
                 title,
                 content,
                 hashTag

@@ -116,7 +116,7 @@ class ArticleControllerTest {
     void givenArticleId_whenRequestingArticleView_thenReturnsArticleView() throws Exception {
         //given
         Long articleId = 1L;
-        given(articleService.getArticle(articleId)).willReturn(createArticleWithCommentDto());
+        given(articleService.getArticleWithCommentsDto(articleId)).willReturn(createArticleWithCommentDto());
 
         //when
         mvc.perform(get("/articles/" + articleId))
@@ -126,7 +126,7 @@ class ArticleControllerTest {
                 .andExpect(model().attributeExists("articleComments"));
 
         //then
-        then(articleService).should().getArticle(articleId);
+        then(articleService).should().getArticleWithCommentsDto(articleId);
     }
 
     private ArticleWithCommentsDto createArticleWithCommentDto() {

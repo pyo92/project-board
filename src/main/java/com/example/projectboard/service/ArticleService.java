@@ -1,10 +1,12 @@
 package com.example.projectboard.service;
 
 import com.example.projectboard.domain.Article;
+import com.example.projectboard.domain.Member;
 import com.example.projectboard.domain.type.SearchType;
 import com.example.projectboard.dto.ArticleDto;
 import com.example.projectboard.dto.ArticleWithCommentsDto;
 import com.example.projectboard.repository.ArticleRepository;
+import com.example.projectboard.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,8 @@ import java.util.List;
 public class ArticleService {
 
     private final ArticleRepository articleRepository;
+
+    private final MemberRepository memberRepository;
 
     @Transactional(readOnly = true)
     public Page<ArticleDto> searchArticles(SearchType searchType, String searchKeyword, List<String> filterTags, Pageable pageable) {
@@ -52,19 +56,27 @@ public class ArticleService {
     }
 
     @Transactional(readOnly = true)
-    public ArticleWithCommentsDto getArticle(long articleId) {
+    public ArticleDto getArticle(long articleId) {
+        return articleRepository.findById(articleId)
+                .map(ArticleDto::from)
+                .orElseThrow(() -> new EntityNotFoundException("게시글이 없습니다. (articleId: " + articleId + ")"));
+    }
+
+    @Transactional(readOnly = true)
+    public ArticleWithCommentsDto getArticleWithCommentsDto(long articleId) {
         return articleRepository.findById(articleId)
                 .map(ArticleWithCommentsDto::from)
                 .orElseThrow(() -> new EntityNotFoundException("게시글이 없습니다. (articleId: " + articleId + ")"));
     }
 
     public void saveArticle(ArticleDto dto) {
-        articleRepository.save(dto.toEntity());
+        Member member = memberRepository.getReferenceById(dto.memberDto().id());
+        articleRepository.save(dto.toEntity(member));
     }
 
-    public void updateArticle(ArticleDto dto) {
+    public void updateArticle(Long articleId, ArticleDto dto) {
         try {
-            Article article = articleRepository.getReferenceById(dto.id());
+            Article article = articleRepository.getReferenceById(articleId);
             if (dto.title() != null) { article.setTitle(dto.title()); }
             if (dto.title() != null) { article.setContent(dto.content()); }
             article.setHashTag(dto.hashTag());
@@ -74,7 +86,7 @@ public class ArticleService {
         }
     }
 
-    public void deleteArticle(long articleId) {
+    public void deleteArticle(Long articleId) {
         articleRepository.deleteById(articleId);
     }
 
