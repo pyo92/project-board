@@ -33,6 +33,7 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
 
     //QueryDSL 설정 (스프링 부트 3.0 이상)
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
