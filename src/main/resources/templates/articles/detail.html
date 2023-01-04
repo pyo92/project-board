@@ -48,9 +48,10 @@
 
         <div class="row g-5">
             <section>
-                <form class="row g-3">
+                <form id="new-comment" class="row g-3">
+                    <input type="hidden" id="articleId" name="articleId" value="">
                     <div class="col-8">
-                        <textarea class="form-control" placeholder="댓글 쓰기..." rows="3"></textarea>
+                        <textarea id="content" name="content" class="form-control" placeholder="댓글 쓰기..." rows="3"></textarea>
                     </div>
                     <div class="col-auto">
                         <button class="btn btn-primary" type="submit">쓰 기</button>
@@ -62,11 +63,15 @@
                 <ul id="article-comment">
                     <li>
                         <div>
-                            <strong>pyo</strong>
-                            <time><small>2022-12-22</small></time>
-                            <p>
-                                첫 번째 댓글
-                            </p>
+                            <form id="delete-comment">
+                                <input type="hidden" name="articleId" value="">
+                                <strong>pyo</strong>
+                                <time><small>2022-12-22</small></time>
+                                <button type="submit" class="btn btn-outline-danger" id="delete-comment-button">삭 제</button>
+                                <p>
+                                    첫 번째 댓글
+                                </p>
+                            </form>
                         </div>
                     </li>
                     <li>
