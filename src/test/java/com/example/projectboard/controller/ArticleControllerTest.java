@@ -10,6 +10,7 @@ import com.example.projectboard.dto.request.ArticleRequest;
 import com.example.projectboard.dto.response.ArticleResponse;
 import com.example.projectboard.service.ArticleService;
 import com.example.projectboard.service.PaginationService;
+import com.example.projectboard.util.FormDataEncoder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
@@ -32,11 +34,16 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayName("View Controller - 게시글")
-@Import(SecurityConfig.class)
+@Import({
+        SecurityConfig.class,
+        FormDataEncoder.class
+})
 @WebMvcTest(ArticleController.class)
 class ArticleControllerTest {
 
     private final MockMvc mvc;
+
+    private final FormDataEncoder formDataEncoder;
 
     @MockBean
     private ArticleService articleService;
@@ -45,8 +52,9 @@ class ArticleControllerTest {
     private PaginationService paginationService;
 
     @Autowired
-    public ArticleControllerTest(MockMvc mvc) {
+    public ArticleControllerTest(MockMvc mvc, FormDataEncoder formDataEncoder) {
         this.mvc = mvc;
+        this.formDataEncoder = formDataEncoder;
     }
 
     @DisplayName("[view][GET] 게시판(게시글 리스트) 페이지 - 정상 호출")
@@ -156,6 +164,7 @@ class ArticleControllerTest {
         mvc.perform(
                         post("/articles/form")
                                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                                .content(formDataEncoder.encode(articleRequest))
                                 .with(csrf())
                 )
                 .andExpect(status().is3xxRedirection())
@@ -194,6 +203,7 @@ class ArticleControllerTest {
         mvc.perform(
                         post("/articles/" + articleId + "/form")
                                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                                .content(formDataEncoder.encode(articleRequest))
                                 .with(csrf())
                 )
                 .andExpect(status().is3xxRedirection())
@@ -213,6 +223,7 @@ class ArticleControllerTest {
         mvc.perform(
                         post("/articles/" + articleId + "/delete")
                                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                                .content(formDataEncoder.encode(Map.of("articleId", articleId)))
                                 .with(csrf())
                 )
                 .andExpect(status().is3xxRedirection())
