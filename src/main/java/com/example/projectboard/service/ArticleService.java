@@ -70,24 +70,28 @@ public class ArticleService {
     }
 
     public void saveArticle(ArticleDto dto) {
-        Member member = memberRepository.getReferenceById(dto.memberDto().id());
+        Member member = memberRepository.getReferenceById(dto.memberDto().userId());
         articleRepository.save(dto.toEntity(member));
     }
 
     public void updateArticle(Long articleId, ArticleDto dto) {
         try {
             Article article = articleRepository.getReferenceById(articleId);
-            if (dto.title() != null) { article.setTitle(dto.title()); }
-            if (dto.title() != null) { article.setContent(dto.content()); }
-            article.setHashTag(dto.hashTag());
+            Member member = memberRepository.getReferenceById(dto.memberDto().userId());
+
+            if (article.getMember().equals(member)) {
+                if (dto.title() != null) { article.setTitle(dto.title()); }
+                if (dto.title() != null) { article.setContent(dto.content()); }
+                article.setHashTag(dto.hashTag());
+            }
             //save() 기재할 필요 없다.
         } catch (EntityNotFoundException e) {
-            log.warn("게시글 업데이트 실패. 게시글을 찾을 수 없습니다. - dto: {}", dto);
+            log.warn("게시글 업데이트 실패. 게시글 수정에 필요한 정보를 찾을 수 없ㅅ브니다.. - dto: {}", dto);
         }
     }
 
-    public void deleteArticle(Long articleId) {
-        articleRepository.deleteById(articleId);
+    public void deleteArticle(Long articleId, String userId) {
+        articleRepository.deleteByIdAndMember_UserId(articleId, userId);
     }
 
     @Transactional(readOnly = true)
