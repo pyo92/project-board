@@ -129,14 +129,14 @@ class ArticleServiceTest {
     void givenArticleInfo_whenSavingArticle_thenSaveArticle() {
         //given
         ArticleDto dto = createArticleDto();
-        given(memberRepository.getReferenceById(dto.memberDto().id())).willReturn(createMember());
+        given(memberRepository.getReferenceById(dto.memberDto().userId())).willReturn(createMember());
         given(articleRepository.save(any(Article.class))).willReturn(createArticle());
 
         //when
         sut.saveArticle(dto);
 
         //then
-        then(memberRepository).should().getReferenceById(dto.memberDto().id());
+        then(memberRepository).should().getReferenceById(dto.memberDto().userId());
         then(articleRepository).should().save(any(Article.class));
     }
 
@@ -147,6 +147,7 @@ class ArticleServiceTest {
         Article article = createArticle();
         ArticleDto dto = createArticleDto("새 타이틀", "새 내용", "#springboot");
         given(articleRepository.getReferenceById(dto.id())).willReturn(article);
+        given(memberRepository.getReferenceById(dto.memberDto().userId())).willReturn(dto.memberDto().toEntity());
 
         //when
         sut.updateArticle(1L, dto);
@@ -157,6 +158,7 @@ class ArticleServiceTest {
                 .hasFieldOrPropertyWithValue("content", dto.content())
                 .hasFieldOrPropertyWithValue("hashTag", dto.hashTag());
         then(articleRepository).should().getReferenceById(dto.id());
+        then(memberRepository).should().getReferenceById(dto.memberDto().userId());
     }
 
     @DisplayName("없는 게시글의 수정 정보를 입력하면, 경고 로그를 찍고 아무 것도 하지 않는다.")
@@ -178,13 +180,14 @@ class ArticleServiceTest {
     void givenArticleId_whenDeletingArticle_thenDeleteArticle() {
         //given
         Long articleId = 1L;
-        willDoNothing().given(articleRepository).deleteById(articleId);
+        String userId = "test";
+        willDoNothing().given(articleRepository).deleteByIdAndMember_UserId(articleId, userId);
 
         //when
-        sut.deleteArticle(1L);
+        sut.deleteArticle(articleId, userId);
 
         //then
-        then(articleRepository).should().deleteById(articleId);
+        then(articleRepository).should().deleteByIdAndMember_UserId(articleId, userId);
     }
 
     private Member createMember() {
@@ -224,7 +227,6 @@ class ArticleServiceTest {
 
     private MemberDto createMemberDto() {
         return MemberDto.of(
-                1L,
                 "pyo",
                 "password",
                 "gipyopark@gmail.com",
