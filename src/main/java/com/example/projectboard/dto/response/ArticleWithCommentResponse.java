@@ -14,13 +14,14 @@ public record ArticleWithCommentResponse(
         String content,
         String hashtag,
         LocalDateTime createdAt,
+        String userId,
         String email,
         String nickname,
         List<ArticleCommentResponse> articleCommentsResponse
 ) implements Serializable {
 
-    public static ArticleWithCommentResponse of(Long id, String title, String content, String hashtag, LocalDateTime createdAt, String email, String nickname, List<ArticleCommentResponse> articleCommentResponses) {
-        return new ArticleWithCommentResponse(id, title, content, hashtag, createdAt, email, nickname, articleCommentResponses);
+    public static ArticleWithCommentResponse of(Long id, String title, String content, String hashtag, LocalDateTime createdAt, String userId, String email, String nickname, List<ArticleCommentResponse> articleCommentResponses) {
+        return new ArticleWithCommentResponse(id, title, content, hashtag, createdAt, userId, email, nickname, articleCommentResponses);
     }
 
     public static ArticleWithCommentResponse from(ArticleWithCommentsDto dto) {
@@ -35,6 +36,7 @@ public record ArticleWithCommentResponse(
                 dto.content(),
                 dto.hashTag(),
                 dto.createdAt(),
+                dto.memberDto().userId(),
                 dto.memberDto().email(),
                 nickname,
                 dto.articleCommentDtos().stream()

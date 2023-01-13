@@ -32,8 +32,9 @@ public interface ArticleRepository extends
     Page<Article> findByHashTagIn(List<String> filterTags, Pageable pageable);
 
     @Query(value = "select distinct a.hashTag from Article a where a.hashTag is not null")
-    public List<String> findAllHashTag();
+    List<String> findAllHashTag();
 
+    void deleteByIdAndMember_UserId(Long id, String userId);
 
     @Override
     default void customize(QuerydslBindings bindings, QArticle root) {

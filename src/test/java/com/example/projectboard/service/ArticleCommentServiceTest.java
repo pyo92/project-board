@@ -46,7 +46,7 @@ class ArticleCommentServiceTest {
         // Given
         ArticleCommentDto dto = createArticleCommentDto("댓글");
         given(articleRepository.getReferenceById(dto.articleId())).willReturn(createArticle());
-        given(memberRepository.getReferenceById(dto.memberDto().id())).willReturn(createMember());
+        given(memberRepository.getReferenceById(dto.memberDto().userId())).willReturn(createMember());
         given(articleCommentRepository.save(any(ArticleComment.class))).willReturn(null);
 
         // When
@@ -54,7 +54,7 @@ class ArticleCommentServiceTest {
 
         // Then
         then(articleRepository).should().getReferenceById(dto.articleId());
-        then(memberRepository).should().getReferenceById(dto.memberDto().id());
+        then(memberRepository).should().getReferenceById(dto.memberDto().userId());
         then(articleCommentRepository).should().save(any(ArticleComment.class));
     }
 
@@ -79,13 +79,14 @@ class ArticleCommentServiceTest {
     void givenArticleCommentId_whenDeletingArticleComment_thenDeletesArticleComment() {
         // Given
         Long articleCommentId = 1L;
-        willDoNothing().given(articleCommentRepository).deleteById(articleCommentId);
+        String userId = "test";
+        willDoNothing().given(articleCommentRepository).deleteByIdAndMember_UserId(articleCommentId, userId);
 
         // When
-        sut.deleteArticleComment(articleCommentId);
+        sut.deleteArticleComment(articleCommentId, userId);
 
         // Then
-        then(articleCommentRepository).should().deleteById(articleCommentId);
+        then(articleCommentRepository).should().deleteByIdAndMember_UserId(articleCommentId, userId);
     }
 
 
@@ -104,7 +105,6 @@ class ArticleCommentServiceTest {
 
     private MemberDto createMemberDto() {
         return MemberDto.of(
-                1L,
                 "pyo",
                 "pyo1234",
                 "gipyopark@gmail.com",

@@ -13,7 +13,7 @@
         <attr sel="#article-content/pre" th:text="*{content}"/>
     </attr>
 
-    <attr sel="#article-buttons">
+    <attr sel="#article-buttons" th:if="${#authorization.expression('isAuthenticated()')} and ${article.userId} == ${#authentication.name}">
         <attr sel="#delete-article-form" th:action="'/articles/' + *{id} + '/delete'" th:method="post">
             <attr sel="#update-article" th:href="'/articles/' + *{id} + '/form'"/>
         </attr>
@@ -31,6 +31,7 @@
                 <attr sel="time/small" th:datetime="${comment.createdAt}"
                       th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm:ss')}"/>
                 <attr sel="p" th:text="${comment.content}"/>
+                <attr sel="button" th:if="${#authorization.expression('isAuthenticated()')} and ${comment.userId} == ${#authentication.name}"/>
             </attr>
         </attr>
     </attr>

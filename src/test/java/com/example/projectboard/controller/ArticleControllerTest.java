@@ -1,6 +1,6 @@
 package com.example.projectboard.controller;
 
-import com.example.projectboard.config.SecurityConfig;
+import com.example.projectboard.config.TestSecurityConfig;
 import com.example.projectboard.domain.type.FormType;
 import com.example.projectboard.domain.type.SearchType;
 import com.example.projectboard.dto.ArticleDto;
@@ -20,6 +20,9 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.TestExecutionEvent;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -35,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @DisplayName("View Controller - 게시글")
 @Import({
-        SecurityConfig.class,
+        TestSecurityConfig.class,
         FormDataEncoder.class
 })
 @WebMvcTest(ArticleController.class)
@@ -122,6 +125,7 @@ class ArticleControllerTest {
         then(paginationService).should().getPaginationBarNumbers(anyInt(), anyInt());
     }
 
+    @WithMockUser
     @DisplayName("[view][GET] 게시글 상세 페이지 - 정상 호출")
     @Test
     void givenArticleId_whenRequestingArticleView_thenReturnsArticleView() throws Exception {
@@ -140,6 +144,23 @@ class ArticleControllerTest {
         then(articleService).should().getArticleWithCommentsDto(articleId);
     }
 
+    @DisplayName("[view][GET] 게시글 상세 페이지 - 인증 없을 시 로그인 페이지로 이동")
+    @Test
+    void givenNothing_whenRequestingArticleView_thenRedirectsLoginPage() throws Exception {
+        //given
+        Long articleId = 1L;
+
+        //when
+        mvc.perform(get("/articles/" + articleId))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("**/login"));
+
+        //then
+        then(articleService).shouldHaveNoInteractions();
+        then(articleService).shouldHaveNoInteractions();
+    }
+
+    @WithUserDetails(value = "pyoTest", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     @DisplayName("[view][GET] 새 게시글 작성 페이지")
     @Test
     void givenNothing_whenRequesting_thenReturnsNewArticlePage() throws Exception {
@@ -153,6 +174,7 @@ class ArticleControllerTest {
                 .andExpect(model().attribute("formType", FormType.CREATE));
     }
 
+    @WithUserDetails(value = "pyoTest", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     @DisplayName("[view][POST] 새 게시글 등록 - 정상 호출")
     @Test
     void givenNewArticleInfo_whenRequesting_thenSavesNewArticle() throws Exception {
@@ -173,6 +195,7 @@ class ArticleControllerTest {
         then(articleService).should().saveArticle(any(ArticleDto.class));
     }
 
+    @WithUserDetails(value = "pyoTest", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     @DisplayName("[view][GET] 게시글 수정 페이지")
     @Test
     void givenNothing_whenRequesting_thenReturnsUpdatedArticlePage() throws Exception {
@@ -191,6 +214,7 @@ class ArticleControllerTest {
         then(articleService).should().getArticle(articleId);
     }
 
+    @WithUserDetails(value = "pyoTest", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     @DisplayName("[view][POST] 게시글 수정 - 정상 호출")
     @Test
     void givenUpdatedArticleInfo_whenRequesting_thenUpdatesNewArticle() throws Exception {
@@ -212,12 +236,14 @@ class ArticleControllerTest {
         then(articleService).should().updateArticle(eq(articleId), any(ArticleDto.class));
     }
 
+    @WithUserDetails(value = "pyoTest", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     @DisplayName("[view][POST] 게시글 삭제 - 정상 호출")
     @Test
     void givenArticleIdToDelete_whenRequesting_thenDeletesArticle() throws Exception {
         // Given
         long articleId = 1L;
-        willDoNothing().given(articleService).deleteArticle(articleId);
+        String userId = "test";
+        willDoNothing().given(articleService).deleteArticle(articleId, userId);
 
         // When & Then
         mvc.perform(
@@ -229,7 +255,7 @@ class ArticleControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/articles"))
                 .andExpect(redirectedUrl("/articles"));
-        then(articleService).should().deleteArticle(articleId);
+        then(articleService).should().deleteArticle(articleId, userId);
     }
 
     private ArticleWithCommentsDto createArticleWithCommentDto() {
@@ -249,7 +275,6 @@ class ArticleControllerTest {
 
     private MemberDto createMemberDto() {
         return MemberDto.of(
-                1L,
                 "pyo",
                 "password",
                 "gipyopark@gmail.com",
