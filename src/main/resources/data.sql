@@ -2,7 +2,8 @@
 -- TODO: 테스트용이지만 비밀번호가 노출된 데이터 세팅. 개선하는 것이 좋을 지 고민해 보자.
 insert into member (user_id, user_pw, nick_name, email, memo, created_at, created_by, modified_at,
                     modified_by)
-values ('pyo', 'pyo1234', 'pyo', 'gipyopark@gmail.com', 'I am pyo.', now(), 'pyo', now(), 'pyo')
+values ('pyo', '{noop}pyo1234', 'pyo', 'gipyopark@gmail.com', 'I am pyo.', now(), 'pyo', now(), 'pyo'),
+       ('pyo2', '{noop}pyo1234', 'pyo2', 'gipyopark2@gmail.com', 'I am pyo2.', now(), 'pyo2', now(), 'pyo2')
 ;
 
 -- 123 게시글
