@@ -86,7 +86,7 @@ public class ArticleService {
             }
             //save() 기재할 필요 없다.
         } catch (EntityNotFoundException e) {
-            log.warn("게시글 업데이트 실패. 게시글 수정에 필요한 정보를 찾을 수 없ㅅ브니다.. - dto: {}", dto);
+            log.warn("게시글 업데이트 실패. 게시글 수정에 필요한 정보를 찾을 수 없습니다.. - dto: {}", dto);
         }
     }
 
@@ -100,7 +100,15 @@ public class ArticleService {
     }
 
     @Transactional(readOnly = true)
-    public List<String> getAllHashTag() {
-        return articleRepository.findAllHashTag();
+    public List<String> getAllHashTag(SearchType searchType, String searchValue) {
+        if (searchType == null) {
+            return articleRepository.findAllHashTag();
+        }
+
+        return switch (searchType) {
+            case TITLE -> articleRepository.findHashTagBySearchTitle(searchValue);
+            case CONTENT -> articleRepository.findHashTagBySearchContent(searchValue);
+            case NICKNAME -> articleRepository.findHashTagBySearchNickName(searchValue);
+        };
     }
 }
