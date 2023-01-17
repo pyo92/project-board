@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import java.util.List;
@@ -33,6 +34,15 @@ public interface ArticleRepository extends
 
     @Query(value = "select distinct a.hashTag from Article a where a.hashTag is not null")
     List<String> findAllHashTag();
+
+    @Query(value = "select distinct a.hashTag from Article a where a.hashTag is not null and a.title like CONCAT('%',:value,'%')")
+    List<String> findHashTagBySearchTitle(@Param("value") String searchValue);
+
+    @Query(value = "select distinct a.hashTag from Article a where a.hashTag is not null and a.content like CONCAT('%',:value,'%')")
+    List<String> findHashTagBySearchContent(@Param("value") String searchValue);
+
+    @Query(value = "select distinct a.hashTag from Article a where a.hashTag is not null and a.member.nickName like CONCAT('%',:value,'%')")
+    List<String> findHashTagBySearchNickName(@Param("value") String searchValue);
 
     void deleteByIdAndMember_UserId(Long id, String userId);
 
