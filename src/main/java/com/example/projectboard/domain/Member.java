@@ -55,10 +55,10 @@ public class Member extends AuditingFields {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Member that)) return false;
-        return userId != null && userId.equals(that.getUserId());
+        return this.getUserId() != null && this.getUserId().equals(that.getUserId());
     }
     @Override
     public int hashCode() {
-        return Objects.hash(userId);
+        return Objects.hash(this.getUserId());
     }
 }
