@@ -5,15 +5,12 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Getter
 @ToString(callSuper = true)
 @Table(indexes = {
         @Index(columnList = "title"),
-        @Index(columnList = "hashTag"),
         @Index(columnList = "createdAt"),
         @Index(columnList = "createdBy")
 })
@@ -36,8 +33,14 @@ public class Article extends AuditingFields {
     @Column(nullable = false, length = 10000)
     private String content;
 
-    @Setter
-    private String hashTag;
+    @ToString.Exclude
+    @JoinTable(
+            name = "article_hashtag",
+            joinColumns = @JoinColumn(name = "articleId"),
+            inverseJoinColumns = @JoinColumn(name = "hashtagId")
+    )
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Set<Hashtag> hashtags = new LinkedHashSet<>();
 
     @ToString.Exclude
     @OrderBy("createdAt DESC")
@@ -46,15 +49,26 @@ public class Article extends AuditingFields {
 
     protected Article() {}
 
-    private Article(Member member, String title, String content, String hashTag) {
+    private Article(Member member, String title, String content) {
         this.member = member;
         this.title = title;
         this.content = content;
-        this.hashTag = hashTag;
     }
 
-    public static Article of(Member member, String title, String content, String hashTag) {
-        return new Article(member, title, content, hashTag);
+    public static Article of(Member member, String title, String content) {
+        return new Article(member, title, content);
+    }
+
+    public void addHashtag(Hashtag hashtag) {
+        this.getHashtags().add(hashtag);
+    }
+
+    public void addHashtags(Collection<Hashtag> hashtags) {
+        this.getHashtags().addAll(hashtags);
+    }
+
+    public void clearHashtags() {
+        this.getHashtags().clear();
     }
 
     @Override

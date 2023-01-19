@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -28,17 +29,15 @@ public class ArticleService {
     private final MemberRepository memberRepository;
 
     @Transactional(readOnly = true)
-    public Page<ArticleDto> searchArticles(SearchType searchType, String searchKeyword, List<String> filterTags, Pageable pageable) {
+    public Page<ArticleDto> searchArticles(SearchType searchType, String searchKeyword, String filterTags, Pageable pageable) {
         if ((searchKeyword == null || searchKeyword.isBlank()) && (filterTags == null || filterTags.isEmpty())) {
             return articleRepository.findAll(pageable).map(ArticleDto::from);
         }
 
         if (searchKeyword == null || searchKeyword.isBlank()) {
             //필터링 조회
-            return articleRepository.findByHashTagIn(filterTags, pageable).map(ArticleDto::from);
-        }
-
-        if (filterTags == null || filterTags.isEmpty()) {
+            return articleRepository.findByHashtagNames(Set.of(filterTags.split(",")), pageable).map(ArticleDto::from);
+        } else if (filterTags == null || filterTags.isEmpty()) {
             //검색바 조회
             return switch (searchType) {
                 case TITLE -> articleRepository.findByTitleContaining(searchKeyword, pageable).map(ArticleDto::from);
@@ -47,11 +46,7 @@ public class ArticleService {
             };
         } else {
             //검색바 + 필터링 조회
-            return switch (searchType) {
-                case TITLE -> articleRepository.findByTitleContainingAndHashTagIn(searchKeyword, filterTags, pageable).map(ArticleDto::from);
-                case CONTENT -> articleRepository.findByContentContainingAndHashTagIn(searchKeyword, filterTags, pageable).map(ArticleDto::from);
-                case NICKNAME -> articleRepository.findByMember_NickNameContainingAndHashTagIn(searchKeyword, filterTags, pageable).map(ArticleDto::from);
-            };
+            return articleRepository.findBySearchKeywordAndHashtagNames(searchType, searchKeyword, Set.of(filterTags.split(",")), pageable).map(ArticleDto::from);
         }
     }
 
@@ -82,7 +77,7 @@ public class ArticleService {
             if (article.getMember().equals(member)) {
                 if (dto.title() != null) { article.setTitle(dto.title()); }
                 if (dto.title() != null) { article.setContent(dto.content()); }
-                article.setHashTag(dto.hashTag());
+//                article.setHashTag(dto.hashTag());
             }
             //save() 기재할 필요 없다.
         } catch (EntityNotFoundException e) {
@@ -97,18 +92,5 @@ public class ArticleService {
     @Transactional(readOnly = true)
     public long getArticleCount() {
         return articleRepository.count();
-    }
-
-    @Transactional(readOnly = true)
-    public List<String> getAllHashTag(SearchType searchType, String searchValue) {
-        if (searchType == null) {
-            return articleRepository.findAllHashTag();
-        }
-
-        return switch (searchType) {
-            case TITLE -> articleRepository.findHashTagBySearchTitle(searchValue);
-            case CONTENT -> articleRepository.findHashTagBySearchContent(searchValue);
-            case NICKNAME -> articleRepository.findHashTagBySearchNickName(searchValue);
-        };
     }
 }
