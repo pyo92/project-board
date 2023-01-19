@@ -2,6 +2,7 @@ package com.example.projectboard.repository;
 
 import com.example.projectboard.config.JpaConfig;
 import com.example.projectboard.domain.Article;
+import com.example.projectboard.domain.Hashtag;
 import com.example.projectboard.domain.Member;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -51,8 +53,9 @@ class JpaRepositoryTest {
     void insert() {
         //given
         long previousArticleCount = articleRepository.count();
-        Member member = memberRepository.save(Member.of("test user", "test user password", null, null, null));
-        Article article = Article.of(member, "test article", "test article's content", "#spring");
+        Member member = memberRepository.save(Member.of("test", "test1234", "test@email.com", "test", ""));
+        Article article = Article.of(member, "test", "test");
+        article.addHashtags(Set.of(Hashtag.of("test")));
 
         //when
         articleRepository.save(article);
@@ -66,13 +69,18 @@ class JpaRepositoryTest {
     void update() {
         //given
         Article article = articleRepository.findById(1L).orElseThrow();
-        article.setHashTag("#springboot");
+        Hashtag updatedHashtag = Hashtag.of("test-updated");
+        article.clearHashtags();
+        article.addHashtags(Set.of(updatedHashtag));
 
         //when
         Article savedArticle = articleRepository.saveAndFlush(article);//flush -> update sql 발생
 
         //then
-        assertThat(savedArticle).hasFieldOrPropertyWithValue("hashTag", "#springboot");
+        assertThat(savedArticle.getHashtags())
+                .hasSize(1)
+                .extracting("name", String.class)
+                .containsExactly(updatedHashtag.getName());
     }
 
     @DisplayName("delete 테스트")
@@ -98,7 +106,7 @@ class JpaRepositoryTest {
     public static class TestJpaConfig {
         @Bean
         public AuditorAware<String> auditorAware() {
-            return () -> Optional.of("pyo");
+            return () -> Optional.of("test");
         }
     }
 }

@@ -1,14 +1,17 @@
 package com.example.projectboard.controller;
 
 import com.example.projectboard.config.TestSecurityConfig;
+import com.example.projectboard.domain.Hashtag;
 import com.example.projectboard.domain.type.FormType;
 import com.example.projectboard.domain.type.SearchType;
 import com.example.projectboard.dto.ArticleDto;
 import com.example.projectboard.dto.ArticleWithCommentsDto;
+import com.example.projectboard.dto.HashtagDto;
 import com.example.projectboard.dto.MemberDto;
 import com.example.projectboard.dto.request.ArticleRequest;
 import com.example.projectboard.dto.response.ArticleResponse;
 import com.example.projectboard.service.ArticleService;
+import com.example.projectboard.service.HashtagService;
 import com.example.projectboard.service.PaginationService;
 import com.example.projectboard.util.FormDataEncoder;
 import org.junit.jupiter.api.DisplayName;
@@ -28,6 +31,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
@@ -50,6 +54,9 @@ class ArticleControllerTest {
 
     @MockBean
     private ArticleService articleService;
+
+    @MockBean
+    private HashtagService hashtagService;
 
     @MockBean
     private PaginationService paginationService;
@@ -85,14 +92,14 @@ class ArticleControllerTest {
     void givenSearchKeyword_whenSearchingArticlesView_thenReturnsArticlesView() throws Exception {
         //given
         SearchType searchType = SearchType.TITLE;
-        String searchValue = "title";
-        given(articleService.searchArticles(eq(searchType), eq(searchValue), eq(null), any(Pageable.class))).willReturn(Page.empty());
+        String searchKeyword = "title";
+        given(articleService.searchArticles(eq(searchType), eq(searchKeyword), eq(null), any(Pageable.class))).willReturn(Page.empty());
         given(paginationService.getPaginationBarNumbers(anyInt(), anyInt())).willReturn(List.of(0, 1, 2, 3, 4));
 
         //when
         mvc.perform(get("/articles")
                         .queryParam("searchType", searchType.name())
-                        .queryParam("searchValue", searchValue)
+                        .queryParam("searchKeyword", searchKeyword)
                 )
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
@@ -101,7 +108,7 @@ class ArticleControllerTest {
                 .andExpect(model().attributeExists("searchTypes"));
 
         //then
-        then(articleService).should().searchArticles(eq(searchType), eq(searchValue), eq(null), any(Pageable.class));
+        then(articleService).should().searchArticles(eq(searchType), eq(searchKeyword), eq(null), any(Pageable.class));
         then(paginationService).should().getPaginationBarNumbers(anyInt(), anyInt());
     }
 
@@ -109,8 +116,8 @@ class ArticleControllerTest {
     @Test
     void givenFilterTags_whenSearchingArticlesView_thenReturnsArticlesView() throws Exception {
         //given
-        String filterTags = "tag";
-        given(articleService.searchArticles(eq(null), eq(null), eq(List.of(filterTags)), any(Pageable.class))).willReturn(Page.empty());
+        String filterTags = "test";
+        given(articleService.searchArticles(eq(null), eq(null), eq(filterTags), any(Pageable.class))).willReturn(Page.empty());
         given(paginationService.getPaginationBarNumbers(anyInt(), anyInt())).willReturn(List.of(0, 1, 2, 3, 4));
 
         //when
@@ -121,7 +128,7 @@ class ArticleControllerTest {
                 .andExpect(model().attributeExists("articles"));
 
         //then
-        then(articleService).should().searchArticles(eq(null), eq(null), eq(List.of(filterTags)), any(Pageable.class));
+        then(articleService).should().searchArticles(eq(null), eq(null), eq(filterTags), any(Pageable.class));
         then(paginationService).should().getPaginationBarNumbers(anyInt(), anyInt());
     }
 
@@ -179,7 +186,7 @@ class ArticleControllerTest {
     @Test
     void givenNewArticleInfo_whenRequesting_thenSavesNewArticle() throws Exception {
         // Given
-        ArticleRequest articleRequest = ArticleRequest.of("new title", "new content", "#new");
+        ArticleRequest articleRequest = ArticleRequest.of("test", "test");
         willDoNothing().given(articleService).saveArticle(any(ArticleDto.class));
 
         // When & Then
@@ -220,7 +227,7 @@ class ArticleControllerTest {
     void givenUpdatedArticleInfo_whenRequesting_thenUpdatesNewArticle() throws Exception {
         // Given
         long articleId = 1L;
-        ArticleRequest articleRequest = ArticleRequest.of("new title", "new content", "#new");
+        ArticleRequest articleRequest = ArticleRequest.of("test", "test");
         willDoNothing().given(articleService).updateArticle(eq(articleId), any(ArticleDto.class));
 
         // When & Then
@@ -263,31 +270,31 @@ class ArticleControllerTest {
                 1L,
                 createMemberDto(),
                 List.of(),
-                "title",
-                "content",
-                "#spring",
-                "pyo",
+                "test",
+                "test",
+                Set.of(HashtagDto.of("test")),
+                "test",
                 LocalDateTime.now(),
-                "pyo",
+                "test",
                 LocalDateTime.now()
         );
     }
 
     private MemberDto createMemberDto() {
         return MemberDto.of(
-                "pyo",
-                "password",
-                "gipyopark@gmail.com",
-                "pyo",
-                "I am pyo.",
-                "pyo",
+                "test",
+                "test1234",
+                "test@email.com",
+                "test",
+                "",
+                "test",
                 LocalDateTime.now(),
-                "pyo",
+                "test",
                 LocalDateTime.now()
         );
     }
 
     private ArticleDto createArticleDto() {
-        return ArticleDto.of(createMemberDto(), "title", "content", "#hashtag");
+        return ArticleDto.of(createMemberDto(), "test", "test", Set.of(HashtagDto.of("test")));
     }
 }

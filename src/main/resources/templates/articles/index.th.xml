@@ -11,7 +11,7 @@
               th:onclick="|location.href='@{/articles(
                   sort=${param.sort},
                   searchType=${param.searchType},
-                  searchValue=${param.searchValue},
+                  searchKeyword=${param.searchKeyword},
                   filterTags=${param.filterTags == null ? '' + hashtag : #strings.contains(param.filterTags, '' + hashtag) ? #strings.replace(param.filterTags, ',' + hashtag, '').replace('' + hashtag, '') : #strings.append(param.filterTags, (#strings.isEmpty(param.filterTags) ? '' : ',') + hashtag)}
               )}'|"/>
     </attr>
@@ -23,7 +23,7 @@
                       page=${articles.number},
                       sort='title' + (${articles.sort.getOrderFor('title')} != null ? (${articles.sort.getOrderFor('title').direction.name} != 'DESC' ? ',desc' : '') : ''),
                       searchType=${param.searchType},
-                      searchValue=${param.searchValue},
+                      searchKeyword=${param.searchKeyword},
                       filterTags=${param.filterTags}
                   )}'|"/>
             <attr sel="th.hash-tag" th:text="'태그'"
@@ -31,7 +31,7 @@
                       page=${articles.number},
                       sort='hashTag' + (${articles.sort.getOrderFor('hashTag')} != null ? (${articles.sort.getOrderFor('hashTag').direction.name} != 'DESC' ? ',desc' : '') : ''),
                       searchType=${param.searchType},
-                      searchValue=${param.searchValue},
+                      searchKeyword=${param.searchKeyword},
                       filterTags=${param.filterTags}
                   )}'|"/>
             <attr sel="th.nick-name" th:text="'작성자'"
@@ -39,7 +39,7 @@
                       page=${articles.number},
                       sort='member.nickName' + (${articles.sort.getOrderFor('member.nickName')} != null ? (${articles.sort.getOrderFor('member.nickName').direction.name} != 'DESC' ? ',desc' : '') : ''),
                       searchType=${param.searchType},
-                      searchValue=${param.searchValue},
+                      searchKeyword=${param.searchKeyword},
                       filterTags=${param.filterTags}
                   )}'|"/>
             <attr sel="th.created-at" th:text="'작성일'"
@@ -47,7 +47,7 @@
                       page=${articles.number},
                       sort='createdAt' + (${articles.sort.getOrderFor('createdAt')} != null ? (${articles.sort.getOrderFor('createdAt').direction.name} != 'DESC' ? ',desc' : '') : ''),
                       searchType=${param.searchType},
-                      searchValue=${param.searchValue},
+                      searchKeyword=${param.searchKeyword},
                       filterTags=${param.filterTags}
                   )}'|"/>
         </attr>
@@ -56,7 +56,7 @@
             <attr sel="tr[0]" th:each="article : ${articles}"
                   th:onclick="|location.href='@{'/articles/' + ${article.id}}'|">
                 <attr sel="td.title" th:text="${article.title}"/>
-                <attr sel="td.hash-tag" th:text="${article.hashtag}"/>
+                <attr sel="td.hash-tag" th:text="${article.hashtags}"/>
                 <attr sel="td.nick-name" th:text="${article.nickname}"/>
                 <attr sel="td.created-at" th:text="${#temporals.format(article.createdAt, 'yyyy-MM-dd')}"/>
             </attr>
@@ -72,10 +72,10 @@
         />
     </attr>
 
-    <attr sel="#search-value" th:value="${param.searchValue}"/>
+    <attr sel="#search-keyword" th:value="${param.searchKeyword}"/>
 
-    <attr sel="#search-value-sort" th:value="${param.sort}"/>
-    <attr sel="#search-value-filter-tags" th:value="${param.filterTags}"/>
+    <attr sel="#search-keyword-sort" th:value="${param.sort}"/>
+    <attr sel="#search-keyword-filter-tags" th:value="${param.filterTags}"/>
 
     <attr sel="#pagination">
         <attr sel="ul">
@@ -86,7 +86,7 @@
                             page=${0},
                             sort=${param.sort},
                             searchType=${param.searchType},
-                            searchValue=${param.searchValue},
+                            searchKeyword=${param.searchKeyword},
                             filterTags=${param.filterTags}
                       )}"
                 />
@@ -98,7 +98,7 @@
                             page=${articles.number - 1},
                             sort=${param.sort},
                             searchType=${param.searchType},
-                            searchValue=${param.searchValue},
+                            searchKeyword=${param.searchKeyword},
                             filterTags=${param.filterTags}
                       )}"
                 />
@@ -110,7 +110,7 @@
                             page=${pageNumber},
                             sort=${param.sort},
                             searchType=${param.searchType},
-                            searchValue=${param.searchValue},
+                            searchKeyword=${param.searchKeyword},
                             filterTags=${param.filterTags}
                       )}"
                 />
@@ -123,7 +123,7 @@
                             page=${articles.number + 1},
                             sort=${param.sort},
                             searchType=${param.searchType},
-                            searchValue=${param.searchValue},
+                            searchKeyword=${param.searchKeyword},
                             filterTags=${param.filterTags}
                       )}"
                 />
@@ -136,7 +136,7 @@
                             page=${articles.totalPages - 1},
                             sort=${param.sort},
                             searchType=${param.searchType},
-                            searchValue=${param.searchValue},
+                            searchKeyword=${param.searchKeyword},
                             filterTags=${param.filterTags}
                       )}"
                 />

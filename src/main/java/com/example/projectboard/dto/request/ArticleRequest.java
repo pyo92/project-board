@@ -1,19 +1,25 @@
 package com.example.projectboard.dto.request;
 
 import com.example.projectboard.dto.ArticleDto;
+import com.example.projectboard.dto.HashtagDto;
 import com.example.projectboard.dto.MemberDto;
+
+import java.util.Set;
 
 public record ArticleRequest(
         String title,
-        String content,
-        String hashtag
+        String content
 ) {
 
-    public static ArticleRequest of(String title, String content, String hashtag) {
-        return new ArticleRequest(title, content, hashtag);
+    public static ArticleRequest of(String title, String content) {
+        return new ArticleRequest(title, content);
     }
 
     public ArticleDto toDto(MemberDto memberDto) {
-        return ArticleDto.of(memberDto, title, content, hashtag);
+        return toDto(memberDto, null);
+    }
+
+    public ArticleDto toDto(MemberDto memberDto, Set<HashtagDto> hashtagDtos) {
+        return ArticleDto.of(memberDto, title, content, hashtagDtos);
     }
 }

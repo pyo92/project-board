@@ -2,12 +2,12 @@ package com.example.projectboard.controller;
 
 import com.example.projectboard.domain.type.FormType;
 import com.example.projectboard.domain.type.SearchType;
-import com.example.projectboard.dto.MemberDto;
 import com.example.projectboard.dto.request.ArticleRequest;
 import com.example.projectboard.dto.response.ArticleResponse;
 import com.example.projectboard.dto.response.ArticleWithCommentResponse;
 import com.example.projectboard.dto.security.BoardPrincipal;
 import com.example.projectboard.service.ArticleService;
+import com.example.projectboard.service.HashtagService;
 import com.example.projectboard.service.PaginationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,22 +28,24 @@ public class ArticleController {
 
     private final ArticleService articleService;
 
+    private final HashtagService hashtagService;
+
     private final PaginationService paginationService;
 
     @GetMapping
     public String articles(
             @RequestParam(required = false) SearchType searchType,
-            @RequestParam(required = false) String searchValue,
-            @RequestParam(required = false) List<String> filterTags,
+            @RequestParam(required = false) String searchKeyword,
+            @RequestParam(required = false) String filterTags,
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
             ModelMap map
     ) {
-        Page<ArticleResponse> articles = articleService.searchArticles(searchType, searchValue, filterTags, pageable).map(ArticleResponse::from);
+        Page<ArticleResponse> articles = articleService.searchArticles(searchType, searchKeyword, filterTags, pageable).map(ArticleResponse::from);
         List<Integer> barNumbers = paginationService.getPaginationBarNumbers(pageable.getPageNumber(), articles.getTotalPages());
         map.addAttribute("articles", articles);
         map.addAttribute("paginationBarNumbers", barNumbers);
         map.addAttribute("searchTypes", SearchType.values());
-        map.addAttribute("hashtags", articleService.getAllHashTag(searchType, searchValue)); //hashtag 목록
+        map.addAttribute("hashtags", hashtagService.getAllHashTagNames()); //hashtag 목록
 
         return "articles/index";
     }

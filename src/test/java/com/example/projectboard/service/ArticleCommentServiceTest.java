@@ -131,8 +131,7 @@ class ArticleCommentServiceTest {
         return Article.of(
                 createMember(),
                 "title",
-                "content",
-                "#java"
+                "content"
         );
     }
 }
