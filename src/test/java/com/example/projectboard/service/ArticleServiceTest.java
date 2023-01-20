@@ -183,12 +183,12 @@ class ArticleServiceTest {
                 .hasFieldOrPropertyWithValue("content", dto.content())
                 .extracting("hashtags", as(InstanceOfAssertFactories.COLLECTION))
                 .hasSize(1)
-                .extracting("hashtagName")
+                .extracting("name")
                 .containsExactly("springboot");
         then(articleRepository).should().getReferenceById(dto.id());
         then(memberRepository).should().getReferenceById(dto.memberDto().userId());
         then(articleRepository).should().flush();
-        then(hashtagService).should(times(1)).deleteHashtagWithoutArticles(any());
+        then(hashtagService).should(times(2)).deleteHashtagWithoutArticles(any());
         then(hashtagService).should().parseHashtagNames(dto.content());
         then(hashtagService).should().findHashtagsByNames(expectedHashtagNames);
     }
@@ -213,13 +213,19 @@ class ArticleServiceTest {
         //given
         Long articleId = 1L;
         String userId = "test";
+        given(articleRepository.getReferenceById(articleId)).willReturn(createArticle());
         willDoNothing().given(articleRepository).deleteByIdAndMember_UserId(articleId, userId);
+        willDoNothing().given(articleRepository).flush();
+        willDoNothing().given(hashtagService).deleteHashtagWithoutArticles(any());
 
         //when
         sut.deleteArticle(articleId, userId);
 
         //then
+        then(articleRepository).should().getReferenceById(articleId);
         then(articleRepository).should().deleteByIdAndMember_UserId(articleId, userId);
+        then(articleRepository).should().flush();
+        then(hashtagService).should(times(2)).deleteHashtagWithoutArticles(any());
     }
 
     private Member createMember() {
