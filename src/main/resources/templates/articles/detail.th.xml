@@ -6,10 +6,17 @@
     <attr sel="#article-main" th:object="${article}">
         <attr sel="header/h1" th:text="*{title}"/>
         <attr sel="#nick-name" th:text="*{nickname}"/>
-        <attr sel="#email" th:text="*{email}"/>
+        <attr sel="#email" th:href="'mailto:' + *{email}" th:text="*{email}"/>
         <attr sel="#created-at" th:datetime="*{createdAt}"
               th:text="*{#temporals.format(createdAt, 'yyyy-MM-dd HH:mm:ss')}"/>
-        <attr sel="#hash-tag" th:text="*{hashtag}"/>
+        <attr sel="#hash-tag" th:each="hashtag : *{hashtags}">
+            <attr sel="a" th:text="'#' + ${hashtag}"
+                  th:href="@{/articles(
+                              sort=${param.sort},
+                              searchType=${param.searchType},
+                              searchKeyword=${param.searchKeyword},
+                              filterTags=${'{' + hashtag + '}'})}"/>
+        </attr>
         <attr sel="#article-content/pre" th:text="*{content}"/>
     </attr>
 

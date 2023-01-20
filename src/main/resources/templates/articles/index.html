@@ -28,12 +28,11 @@
                     <div class="grid-body">
                         <div class="row">
                             <!-- BEGIN FILTERS -->
-                            <div class="col-md-3">
-                                <h2 class="grid-title"><i class="fa fa-filter"></i> Filters</h2>
+                            <div class="col-md-2">
+                                <h2 class="grid-title"><i class="fa fa-filter"></i> Filter</h2>
                                 <hr>
 
                                 <!-- BEGIN FILTER BY HASHTAG -->
-                                <h4>By tag:</h4>
                                 <div class="checkbox" id="hash-tag">
                                     <input type="checkbox" class="icheck" />
                                 </div>
@@ -41,9 +40,9 @@
                             </div>
                             <!-- END FILTERS -->
                             <!-- BEGIN RESULT -->
-                            <div class="col-md-9">
+                            <div class="col-md-10">
                                 <h2>
-                                    <i class="fa fa-file-o"></i> Articles
+                                    <i class="fa fa-file-o"></i>
                                     <button id="new-article" class="btn btn-dark float-end" type="button">글쓰기</button>
                                 </h2>
                                 <hr>
@@ -55,7 +54,7 @@
                                         <thead>
                                         <tr>
                                             <th class="title col-6">제목</th>
-                                            <th class="hash-tag col">태그</th>
+                                            <th class="hash-tag col">해시태그</th>
                                             <th class="nick-name col">작성자</th>
                                             <th class="created-at col">작성일</th>
                                         </tr>
@@ -63,7 +62,11 @@
                                         <tbody>
                                         <tr>
                                             <td class="title col-6 text-truncate" style="max-width: 400px">첫 번째 글</td>
-                                            <td class="hash-tag col">#spring</td>
+                                            <td class="hash-tag col">
+                                                <span class="badge text-bg-secondary mx-1">
+                                                    <a class="text-reset">#spring</a>
+                                                </span>
+                                            </td>
                                             <td class="nick-name col">pyo</td>
                                             <td class="created-at col">2022-12-22</td>
                                         </tr>
