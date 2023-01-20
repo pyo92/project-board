@@ -6,13 +6,13 @@
     <attr sel="#new-article" sec:authorize="isAuthenticated()" th:onclick="|location.href='/articles/form'|"/>
 
     <attr sel="#hash-tag" th:each="hashtag : ${hashtags}">
-        <attr sel="input" th:text="' ' + ${hashtag}" th:value="${hashtag}"
-              th:checked="${param.filterTags == null ? 'false' : #strings.contains(param.filterTags, '' + hashtag)}"
+        <attr sel="input" th:text="' #' + ${hashtag}" th:value="${hashtag}"
+              th:checked="${param.filterTags == null ? 'false' : #strings.contains(param.filterTags, '{' + hashtag + '}')}"
               th:onclick="|location.href='@{/articles(
                   sort=${param.sort},
                   searchType=${param.searchType},
                   searchKeyword=${param.searchKeyword},
-                  filterTags=${param.filterTags == null ? '' + hashtag : #strings.contains(param.filterTags, '' + hashtag) ? #strings.replace(param.filterTags, ',' + hashtag, '').replace('' + hashtag, '') : #strings.append(param.filterTags, (#strings.isEmpty(param.filterTags) ? '' : ',') + hashtag)}
+                  filterTags=${param.filterTags == null ? '{' + hashtag + '}' : #strings.contains(param.filterTags, '{' + hashtag + '}') ? #strings.replace(param.filterTags, ',{' + hashtag + '}', '').replace('{' + hashtag + '}', '') : #strings.append(param.filterTags, (#strings.isEmpty(param.filterTags) ? '' : ',') + '{' + hashtag + '}')}
               )}'|"/>
     </attr>
 
@@ -26,14 +26,14 @@
                       searchKeyword=${param.searchKeyword},
                       filterTags=${param.filterTags}
                   )}'|"/>
-            <attr sel="th.hash-tag" th:text="'태그'"
+            <attr sel="th.hash-tag" th:text="'해시태그'"
                   th:onclick="|location.href='@{/articles(
                       page=${articles.number},
-                      sort='hashTag' + (${articles.sort.getOrderFor('hashTag')} != null ? (${articles.sort.getOrderFor('hashTag').direction.name} != 'DESC' ? ',desc' : '') : ''),
+                      sort='hashtags.name' + (${articles.sort.getOrderFor('hashtags.name')} != null ? (${articles.sort.getOrderFor('hashtags.name').direction.name} != 'DESC' ? ',desc' : '') : ''),
                       searchType=${param.searchType},
                       searchKeyword=${param.searchKeyword},
                       filterTags=${param.filterTags}
-                  )}'|"/>
+                  )}'|"/>그
             <attr sel="th.nick-name" th:text="'작성자'"
                   th:onclick="|location.href='@{/articles(
                       page=${articles.number},
@@ -56,7 +56,14 @@
             <attr sel="tr[0]" th:each="article : ${articles}"
                   th:onclick="|location.href='@{'/articles/' + ${article.id}}'|">
                 <attr sel="td.title" th:text="${article.title}"/>
-                <attr sel="td.hash-tag" th:text="${article.hashtags}"/>
+                <attr sel="td.hash-tag/span" th:each="hashtag : ${article.hashtags}">
+                    <attr sel="a" th:text="'#' + ${hashtag}"
+                          th:href="@{/articles(
+                              sort=${param.sort},
+                              searchType=${param.searchType},
+                              searchKeyword=${param.searchKeyword},
+                              filterTags=${'{' + hashtag + '}'})}"/>
+                </attr>
                 <attr sel="td.nick-name" th:text="${article.nickname}"/>
                 <attr sel="td.created-at" th:text="${#temporals.format(article.createdAt, 'yyyy-MM-dd')}"/>
             </attr>

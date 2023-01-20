@@ -1,6 +1,7 @@
 package com.example.projectboard.service;
 
 import com.example.projectboard.domain.Article;
+import com.example.projectboard.domain.Hashtag;
 import com.example.projectboard.domain.Member;
 import com.example.projectboard.domain.type.SearchType;
 import com.example.projectboard.dto.ArticleDto;
@@ -15,8 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -28,8 +29,14 @@ public class ArticleService {
 
     private final MemberRepository memberRepository;
 
+    private final HashtagService hashtagService;
+
     @Transactional(readOnly = true)
     public Page<ArticleDto> searchArticles(SearchType searchType, String searchKeyword, String filterTags, Pageable pageable) {
+        if (filterTags != null) {
+            filterTags = filterTags.replace("{", "").replace("}", "");
+        }
+
         if ((searchKeyword == null || searchKeyword.isBlank()) && (filterTags == null || filterTags.isEmpty())) {
             return articleRepository.findAll(pageable).map(ArticleDto::from);
         }
@@ -66,7 +73,12 @@ public class ArticleService {
 
     public void saveArticle(ArticleDto dto) {
         Member member = memberRepository.getReferenceById(dto.memberDto().userId());
-        articleRepository.save(dto.toEntity(member));
+
+        Set<Hashtag> hashtags = renewHashtagsFromContent(dto.content());
+
+        Article article = dto.toEntity(member);
+        article.addHashtags(hashtags);
+        articleRepository.save(article);
     }
 
     public void updateArticle(Long articleId, ArticleDto dto) {
@@ -76,8 +88,19 @@ public class ArticleService {
 
             if (article.getMember().equals(member)) {
                 if (dto.title() != null) { article.setTitle(dto.title()); }
-                if (dto.title() != null) { article.setContent(dto.content()); }
-//                article.setHashTag(dto.hashTag());
+                if (dto.content() != null) { article.setContent(dto.content()); }
+
+                Set<Long> oldHashtagIds = article.getHashtags().stream()
+                        .map(Hashtag::getId)
+                        .collect(Collectors.toUnmodifiableSet());
+
+                article.clearHashtags();
+                articleRepository.flush();
+
+                oldHashtagIds.forEach(hashtagService::deleteHashtagWithoutArticles);
+
+                Set<Hashtag> newHashtags = renewHashtagsFromContent(dto.content());
+                article.addHashtags(newHashtags);
             }
             //save() 기재할 필요 없다.
         } catch (EntityNotFoundException e) {
@@ -86,11 +109,35 @@ public class ArticleService {
     }
 
     public void deleteArticle(Long articleId, String userId) {
+        Article article = articleRepository.getReferenceById(articleId);
+        Set<Long> hashtagIds = article.getHashtags().stream()
+                .map(Hashtag::getId)
+                .collect(Collectors.toUnmodifiableSet());
+
         articleRepository.deleteByIdAndMember_UserId(articleId, userId);
+        articleRepository.flush();
+
+        hashtagIds.forEach(hashtagService::deleteHashtagWithoutArticles);
     }
 
     @Transactional(readOnly = true)
     public long getArticleCount() {
         return articleRepository.count();
+    }
+
+    private Set<Hashtag> renewHashtagsFromContent(String content) {
+        Set<String> hashtagNamesInContent = hashtagService.parseHashtagNames(content);
+        Set<Hashtag> hashtagInContent = hashtagService.findHashtagsByNames(hashtagNamesInContent);
+        Set<String> existHashtagNameInContent = hashtagInContent.stream().map(Hashtag::getName).collect(Collectors.toUnmodifiableSet());
+
+        hashtagNamesInContent.forEach(
+                newHashtagNames -> {
+                    if (!existHashtagNameInContent.contains(newHashtagNames)) {
+                        hashtagInContent.add(Hashtag.of(newHashtagNames));
+                    }
+                }
+        );
+
+        return hashtagInContent;
     }
 }
