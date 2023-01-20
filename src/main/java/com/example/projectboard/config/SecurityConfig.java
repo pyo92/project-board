@@ -23,6 +23,7 @@ public class SecurityConfig {
         return httpSecurity
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/favicon.ico", "/resources/**", "/error").permitAll()
                         .requestMatchers(HttpMethod.GET, "/", "/articles").permitAll()
                         .anyRequest().authenticated()
                 )
