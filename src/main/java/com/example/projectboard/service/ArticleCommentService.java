@@ -1,6 +1,7 @@
 package com.example.projectboard.service;
 
 import com.example.projectboard.domain.Article;
+import com.example.projectboard.domain.ArticleComment;
 import com.example.projectboard.domain.Member;
 import com.example.projectboard.dto.ArticleCommentDto;
 import com.example.projectboard.repository.ArticleCommentRepository;
@@ -30,7 +31,14 @@ public class ArticleCommentService {
         try {
             Article article = articleRepository.getReferenceById(dto.articleId());
             Member member = memberRepository.getReferenceById(dto.memberDto().userId());
-            articleCommentRepository.save(dto.toEntity(article, member));
+
+            ArticleComment articleComment = dto.toEntity(article, member);
+            if (dto.parentCommentId() != null) {
+                ArticleComment parentComment = articleCommentRepository.getReferenceById(dto.parentCommentId());
+                parentComment.addChildComment(articleComment);
+            } else {
+                articleCommentRepository.save(articleComment);
+            }
         } catch (EntityNotFoundException e) {
             log.warn("댓글 저장 실패. 댓글 작성에 필요한 정보를 찾을 수 없습니다. - {}", e.getLocalizedMessage());
         }

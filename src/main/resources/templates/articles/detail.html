@@ -20,67 +20,99 @@
             <h1>첫 번째 글</h1>
         </header>
 
-        <div class="row g-5">
-            <section class="col-md-5 col-lg-4 order-md-last">
-                <aside>
-                    <p><span id="nick-name" class="nick-name">pyo</span></p>
-                    <p><a id="email" class="u-url" rel="me" href="mailto:gipyopark@gmail.com">gipyopark@gmail.com</a></p>
-                    <p><time id="created-at" datetime="2022-12-22T23:00:00">2022-12-22</time></p>
-                    <p><span id="hash-tag" class="badge text-bg-secondary mx-1"><a class="text-reset">#spring</a></span></p>
-                </aside>
-            </section>
+        <div class="row">
+            <div class="row">
+                <div class="col-md-10 border rounded-2">
+                    <article id="article-content">
+                        <pre>첫 번째 글의 본문<br></pre>
+                    </article>
+                </div>
 
-            <hr>
-
-            <article id="article-content" class="col-md-7 col-lg-8">
-                <pre>첫 번째 글의 본문<br></pre>
-            </article>
+                <div class="col-md-2 float-md-end">
+                    <section class="order-md-last">
+                        <aside>
+                            <p><span id="nick-name" class="nick-name">pyo</span></p>
+                            <p><a id="email" class="u-url" rel="me" href="mailto:gipyopark@gmail.com">gipyopark@gmail.com</a></p>
+                            <p><time id="created-at" datetime="2022-12-22T23:00:00">2022-12-22</time></p>
+                            <p><span id="hash-tag" class="badge text-bg-secondary mx-1"><a class="text-reset">#spring</a></span></p>
+                        </aside>
+                    </section>
+                </div>
+            </div>
         </div>
 
-        <div class="row g-5" id="article-buttons">
+        <div class="row mt-5" id="article-buttons">
             <form id="delete-article-form">
-                <div class="pb-5 d-grid gap-2 d-md-block">
+                <div class="float-md-end">
                     <a class="btn btn-success me-md-2" role="button" id="update-article">수 정</a>
-                    <button class="btn btn-danger me-md-2" type="submit">삭 제</button>
+                    <button class="btn btn-danger" type="submit">삭 제</button>
                 </div>
             </form>
         </div>
 
-        <div class="row g-5">
+        <br>
+        <hr>
+
+        <div class="row mt-5">
             <section>
-                <form id="new-comment" class="row g-3">
-                    <input type="hidden" id="articleId" name="articleId" value="">
-                    <div class="col-8">
-                        <textarea id="content" name="content" class="form-control" placeholder="댓글 쓰기..." rows="3"></textarea>
+                <form class="row g-3 comment-form">
+                    <input type="hidden" class="article-id">
+                    <div class="col-md-10">
+                        <textarea class="form-control comment-textbox" placeholder="댓글 쓰기..." rows="3"></textarea>
                     </div>
-                    <div class="col-auto">
+                    <div class="col">
                         <button class="btn btn-primary" type="submit">쓰 기</button>
                     </div>
                 </form>
 
-                <br>
-
                 <ul id="article-comment">
-                    <li>
-                        <div>
-                            <form id="delete-comment">
-                                <input type="hidden" name="articleId" value="">
-                                <strong>pyo</strong>
-                                <time><small>2022-12-22</small></time>
-                                <button type="submit" class="btn btn-outline-danger" id="delete-comment-button">삭 제</button>
-                                <p>
-                                    첫 번째 댓글
-                                </p>
-                            </form>
-                        </div>
-                    </li>
-                    <li>
-                        <div>
+                    <li class="mt-4 parent-comment">
+                        <form id="delete-comment">
+                            <input type="hidden" class="article-id">
                             <strong>pyo</strong>
                             <time><small>2022-12-22</small></time>
-                            <p>
-                                두 번째 댓글
-                            </p>
+                            <div class="row mt-2">
+                                <div class="col-md-10 border rounded-2">
+                                    <p>첫 번째 댓글</p>
+                                </div>
+                                <div class="col-auto float-md-end">
+                                    <button type="submit" class="btn btn-outline-danger" id="delete-comment-button">삭 제</button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <ul class="mt-2">
+                            <li class="child-comment">
+                                <form id="delete-child-comment">
+                                    <input type="hidden" class="article-id">
+                                    <strong id="child-nickname">nickname</strong>
+                                    <time><small id="child-date-time">2022-12-22</small></time>
+                                    <div class="row mt-2">
+                                        <div class="col-md-10 border rounded-2">
+                                            <p>첫 번째 대댓글</p>
+                                        </div>
+                                        <div class="col-auto float-md-end">
+                                            <button type="submit" class="btn btn-outline-danger" id="delete-child-comment-button">삭 제</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </li>
+                        </ul>
+
+                        <div class="row mt-3">
+                            <details>
+                                <summary>대댓글 달기</summary>
+                                <form class="comment-form row mt-2">
+                                    <input type="hidden" class="article-id">
+                                    <input type="hidden" class="parent-comment-id">
+                                    <div class="col-md-10">
+                                        <textarea class="form-control comment-textbox" placeholder="댓글 쓰기..." rows="3"></textarea>
+                                    </div>
+                                    <div class="col">
+                                        <button class="btn btn-primary" type="submit">쓰 기</button>
+                                    </div>
+                                </form>
+                            </details>
                         </div>
                     </li>
                 </ul>

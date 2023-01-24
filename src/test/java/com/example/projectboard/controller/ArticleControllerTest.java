@@ -269,7 +269,7 @@ class ArticleControllerTest {
         return ArticleWithCommentsDto.of(
                 1L,
                 createMemberDto(),
-                List.of(),
+                Set.of(),
                 "test",
                 "test",
                 Set.of(HashtagDto.of("test")),
