@@ -28,7 +28,7 @@ public record ArticleCommentResponse(
         Comparator<ArticleCommentResponse> childCommentComparator = Comparator
                 .comparing(ArticleCommentResponse::createdAt)
                 .thenComparingLong(ArticleCommentResponse::id);
-        return new ArticleCommentResponse(id, content, createdAt, email, nickname, userId, parentCommentId, new TreeSet<>(childCommentComparator));
+        return new ArticleCommentResponse(id, content, createdAt, userId, email, nickname, parentCommentId, new TreeSet<>(childCommentComparator));
     }
 
     public static ArticleCommentResponse from(ArticleCommentDto dto) {
