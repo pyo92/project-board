@@ -26,19 +26,36 @@
         </attr>
     </attr>
 
-    <attr sel="#new-comment" th:action="'/comments/new'" th:method="post">
-        <attr sel="#articleId" th:value="${article.id}"/>
+    <attr sel=".article-id" th:name="articleId" th:value="*{id}" />
+
+    <attr sel=".comment-form" th:action="'/comments/new'" th:method="post">
+        <attr sel=".comment-textbox" th:name="content"/>
     </attr>
 
     <attr sel="#article-comment" th:remove="all-but-first">
-        <attr sel="li[0]" th:each="comment : ${articleComments}">
-            <attr sel="div/form" th:action="'/comments/' + ${comment.id} + '/delete'" th:method="post">
-                <attr sel="input" th:value="${article.id}"/>
+        <attr sel=".parent-comment[0]" th:each="comment : ${articleComments}">
+            <attr sel="form" th:action="'/comments/' + ${comment.id} + '/delete'" th:method="post">
                 <attr sel="strong" th:text="${comment.nickname}"/>
                 <attr sel="time/small" th:datetime="${comment.createdAt}"
                       th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm:ss')}"/>
-                <attr sel="p" th:text="${comment.content}"/>
-                <attr sel="button" th:if="${#authorization.expression('isAuthenticated()')} and ${comment.userId} == ${#authentication.name}"/>
+                <attr sel="div/div/p" th:text="${comment.content}"/>
+                <attr sel="div/div/button" th:if="${#authorization.expression('isAuthenticated()')} and ${comment.userId} == ${#authentication.name}"/>
+            </attr>
+
+            <attr sel="ul" th:if="${comment.childComments.size() > 0}" th:remove="all-but-first">
+                <attr sel=".child-comment[0]" th:each="childComment : ${comment.childComments}">
+                    <attr sel="form" th:action="'/comments/' + ${childComment.id} + '/delete'" th:method="post">
+                        <attr sel="#child-nickname" th:text="${childComment.nickname}"/>
+                        <attr sel="#child-date-time" th:datetime="${childComment.createdAt}"
+                              th:text="${#temporals.format(childComment.createdAt, 'yyyy-MM-dd HH:mm:ss')}"/>
+                        <attr sel="div/div/p" th:text="${childComment.content}"/>
+                        <attr sel="div/div/button" th:if="${#authorization.expression('isAuthenticated()')} and ${childComment.userId} == ${#authentication.name}"/>
+                    </attr>
+                </attr>
+            </attr>
+
+            <attr sel="div/details/form">
+                <attr sel=".parent-comment-id" th:name="parentCommentId" th:value="${comment.id}"/>
             </attr>
         </attr>
     </attr>
