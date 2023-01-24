@@ -4,6 +4,7 @@ import com.example.projectboard.domain.Article;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -11,7 +12,7 @@ import java.util.stream.Collectors;
 public record ArticleWithCommentsDto(
         Long id,
         MemberDto memberDto,
-        List<ArticleCommentDto> articleCommentDtos,
+        Set<ArticleCommentDto> articleCommentDtos,
         String title,
         String content,
         Set<HashtagDto> hashTagDtos,
@@ -20,7 +21,7 @@ public record ArticleWithCommentsDto(
         String modifiedBy,
         LocalDateTime modifiedAt
 ) {
-    public static ArticleWithCommentsDto of(Long id, MemberDto memberDto, List<ArticleCommentDto> articleCommentDtos, String title, String content, Set<HashtagDto> hashTagDtos, String createdBy, LocalDateTime createdAt, String modifiedBy, LocalDateTime modifiedAt) {
+    public static ArticleWithCommentsDto of(Long id, MemberDto memberDto, Set<ArticleCommentDto> articleCommentDtos, String title, String content, Set<HashtagDto> hashTagDtos, String createdBy, LocalDateTime createdAt, String modifiedBy, LocalDateTime modifiedAt) {
         return new ArticleWithCommentsDto(id, memberDto, articleCommentDtos, title, content, hashTagDtos, createdBy, createdAt, modifiedBy, modifiedAt);
     }
 
@@ -30,7 +31,7 @@ public record ArticleWithCommentsDto(
                 MemberDto.from(entity.getMember()),
                 entity.getArticleComments().stream()
                         .map(ArticleCommentDto::from)
-                        .collect(Collectors.toCollection(ArrayList::new)),
+                        .collect(Collectors.toCollection(LinkedHashSet::new)),
                 entity.getTitle(),
                 entity.getContent(),
                 entity.getHashtags().stream()
