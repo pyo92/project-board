@@ -9,15 +9,20 @@ import com.example.projectboard.repository.ArticleCommentRepository;
 import com.example.projectboard.repository.ArticleRepository;
 import com.example.projectboard.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.BDDAssertions.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
 
@@ -39,7 +44,7 @@ class ArticleCommentServiceTest {
 
     ArticleCommentServiceTest() {
     }
-
+    
     @DisplayName("댓글 정보를 입력하면, 댓글을 저장한다.")
     @Test
     void givenArticleCommentInfo_whenSavingArticleComment_thenSavesArticleComment() {
@@ -74,6 +79,28 @@ class ArticleCommentServiceTest {
         then(articleCommentRepository).shouldHaveNoInteractions();
     }
 
+    @DisplayName("부모 댓글 ID와 댓글 정보를 입력하면, 대댓글을 저장한다.")
+    @Test
+    void givenParentCommentIdAndArticleCommentInfo_whenSaving_thenSavesChildComment() {
+        // Given
+        Long parentCommentId = 1L;
+        ArticleCommentDto parent = createArticleCommentDto(parentCommentId, "댓글");
+        ArticleCommentDto child = createArticleCommentDto(parentCommentId, "대댓글");
+        given(articleRepository.getReferenceById(child.articleId())).willReturn(createArticle());
+        given(memberRepository.getReferenceById(child.memberDto().userId())).willReturn(createMember());
+        given(articleCommentRepository.getReferenceById(child.parentCommentId())).willReturn(parent.toEntity(createArticle(), createMember()));
+
+        // When
+        sut.saveArticleComment(child);
+
+        // Then
+        assertThat(child.parentCommentId()).isNotNull();
+        then(articleRepository).should().getReferenceById(child.articleId());
+        then(memberRepository).should().getReferenceById(child.memberDto().userId());
+        then(articleCommentRepository).should().getReferenceById(child.parentCommentId());
+        then(articleCommentRepository).should(never()).save(any(ArticleComment.class));
+    }
+
     @DisplayName("댓글 ID를 입력하면, 댓글을 삭제한다.")
     @Test
     void givenArticleCommentId_whenDeletingArticleComment_thenDeletesArticleComment() {
@@ -89,12 +116,16 @@ class ArticleCommentServiceTest {
         then(articleCommentRepository).should().deleteByIdAndMember_UserId(articleCommentId, userId);
     }
 
-
     private ArticleCommentDto createArticleCommentDto(String content) {
+        return createArticleCommentDto(null, content);
+    }
+
+    private ArticleCommentDto createArticleCommentDto(Long parentCommentId, String content) {
         return ArticleCommentDto.of(
                 1L,
                 1L,
                 createMemberDto(),
+                parentCommentId,
                 content,
                 "pyo",
                 LocalDateTime.now(),
@@ -133,5 +164,17 @@ class ArticleCommentServiceTest {
                 "title",
                 "content"
         );
+    }
+
+    private ArticleComment createArticleComment(Long id, String content) {
+        ArticleComment articleComment = ArticleComment.of(
+                createArticle(),
+                createMember(),
+                content
+        );
+
+        ReflectionTestUtils.setField(articleComment, "id", id);
+
+        return articleComment;
     }
 }
