@@ -2,8 +2,7 @@
 <thlogic>
     <attr sel="#home" th:href="@{/}"/>
     <attr sel="#userinfo" sec:authorize="isAuthenticated()"/>
-    <attr sel="#userid" sec:authorize="isAuthenticated()" sec:authentication="principal.nickname"/>
+    <attr sel="#userid" sec:authorize="isAuthenticated()" sec:authentication="name"/>
     <attr sel="#login" sec:authorize="!isAuthenticated()" th:href="@{/login}"/>
-    <attr sel="#kakao-login" sec:authorize="!isAuthenticated()" th:href="@{/oauth2/authorization/kakao}"/>
     <attr sel="#logout" sec:authorize="isAuthenticated()" th:href="@{/logout}"/>
 </thlogic>

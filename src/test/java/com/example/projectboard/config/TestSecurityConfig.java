@@ -1,7 +1,7 @@
 package com.example.projectboard.config;
 
-import com.example.projectboard.dto.MemberDto;
-import com.example.projectboard.service.MemberService;
+import com.example.projectboard.domain.Member;
+import com.example.projectboard.repository.MemberRepository;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.event.annotation.BeforeTestMethod;
@@ -14,27 +14,16 @@ import static org.mockito.BDDMockito.given;
 @Import(SecurityConfig.class)
 public class TestSecurityConfig {
 
-    @MockBean private MemberService memberService;
+    @MockBean private MemberRepository memberRepository;
 
     @BeforeTestMethod
     public void securitySetUp() {
-        given(memberService.searchMember(anyString()))
-                .willReturn(Optional.of(createMemberDto()));
-        given(memberService.saveMember(anyString(), anyString(), anyString(), anyString(), anyString()))
-                .willReturn(createMemberDto());
-    }
-
-    private MemberDto createMemberDto() {
-        return MemberDto.of(
+        given(memberRepository.findById(anyString())).willReturn(Optional.of(Member.of(
                 "test",
                 "test",
                 "test@email.com",
                 "test",
-                "test",
-                null,
-                null,
-                null,
-                null
-        );
+                "test"
+        )));
     }
 }
