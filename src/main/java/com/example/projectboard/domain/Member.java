@@ -8,7 +8,7 @@ import lombok.ToString;
 import java.util.Objects;
 
 @Getter
-@ToString
+@ToString(callSuper = true)
 @Table(indexes = {
         @Index(columnList = "email", unique = true),
         @Index(columnList = "createdAt"),
@@ -39,16 +39,22 @@ public class Member extends AuditingFields {
 
     protected Member() {};
 
-    private Member(String userId, String userPw, String email, String nickName, String memo) {
+    private Member(String userId, String userPw, String email, String nickName, String memo, String createdBy) {
         this.userId = userId;
         this.userPw = userPw;
         this.email = email;
         this.nickName = nickName;
         this.memo = memo;
+        this.createdBy = createdBy;
+        this.modifiedBy = createdBy;
     }
 
     public static Member of(String userId, String userPw, String email, String nickName, String memo) {
-        return new Member(userId, userPw, email, nickName, memo);
+        return Member.of(userId, userPw, email, nickName, memo, null);
+    }
+
+    public static Member of(String userId, String userPw, String email, String nickName, String memo, String createdBy) {
+        return new Member(userId, userPw, email, nickName, memo, createdBy);
     }
 
     @Override
