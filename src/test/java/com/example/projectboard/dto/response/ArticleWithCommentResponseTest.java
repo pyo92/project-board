@@ -4,7 +4,7 @@ import com.example.projectboard.dto.ArticleCommentDto;
 import com.example.projectboard.dto.ArticleWithCommentsDto;
 import com.example.projectboard.dto.HashtagDto;
 import com.example.projectboard.dto.MemberDto;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 
 import java.time.LocalDateTime;
