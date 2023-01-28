@@ -63,8 +63,8 @@ spring:
     url: ${JAWSDB_URL}
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
   sql:
     init:
-      mode: always
+      mode: never
 
