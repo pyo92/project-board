@@ -52,6 +52,15 @@ spring:
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
+  application:
+    name: project-board
+  cloud:
+    vault:
+      scheme: http
+      authentication: token
+      token: ${VAULT_TOKEN}
+  config:
+    import: vault://
 
 ---
 
