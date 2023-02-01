@@ -25,6 +25,7 @@ Spring Boot
 * Lombok
 * Spring Boot DevTools
 * Spring Configuration Processor
+* OAuth2 Client
 
 그 외
 
